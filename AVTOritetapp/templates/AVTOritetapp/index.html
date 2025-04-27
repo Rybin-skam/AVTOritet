@@ -1,0 +1,105 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoImport | Прямые поставки авто из Азии</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'AVTOritetapp/css/style.css' %}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header__inner">
+                <a href="/" class="logo">Auto<span>Import</span></a>
+                <nav class="nav">
+                    <a href="#services">Услуги</a>
+                    <a href="#countries">Страны</a>
+                    <a href="#contacts">Контакты</a>
+                </nav>
+                <div class="header__phone">
+                    <i class="fas fa-phone-alt"></i> +7 (999) 123-45-67
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Автомобили из Японии, Китая и Кореи</h1>
+            <p>Прямые поставки под ключ с гарантией 1 год</p>
+            <a href="#form" class="btn">Оставить заявку</a>
+        </div>
+    </section>
+
+    <section id="services" class="section">
+        <div class="container">
+            <h2>Наши услуги</h2>
+            <div class="services">
+                <div class="service-card">
+                    <i class="fas fa-car"></i>
+                    <h3>Подбор авто</h3>
+                    <p>Индивидуальный подбор по вашим параметрам</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-shipping-fast"></i>
+                    <h3>Доставка</h3>
+                    <p>Логистика "от двери до двери"</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-file-contract"></i>
+                    <h3>Растаможка</h3>
+                    <p>Полное юридическое сопровождение</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="countries" class="section dark-bg">
+        <div class="container">
+            <h2>Страны импорта</h2>
+            <div class="countries">
+                <div class="country-card">
+                    <img src="{% static 'myapp/img/japan.jpg' %}" alt="Япония">
+                    <h3>Япония</h3>
+                    <p>Проверенные аукционы: USS, TAA, JU</p>
+                </div>
+                <div class="country-card">
+                    <img src="{% static 'myapp/img/korea.jpg' %}" alt="Корея">
+                    <h3>Корея</h3>
+                    <p>Официальные дилеры и б/у рынок</p>
+                </div>
+                <div class="country-card">
+                    <img src="{% static 'myapp/img/china.jpg' %}" alt="Китай">
+                    <h3>Китай</h3>
+                    <p>Новые электромобили и кроссоверы</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contacts" class="footer">
+        <div class="container">
+            <div class="footer__inner">
+                <div class="footer__col">
+                    <h3>Контакты</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> г. Москва, ул. Автоимпортная, 12</p>
+                    <p><i class="fas fa-phone-alt"></i> +7 (999) 123-45-67</p>
+                    <p><i class="fas fa-envelope"></i> info@autoimport.ru</p>
+                </div>
+                <div class="footer__col">
+                    <h3>Мы в соцсетях</h3>
+                    <div class="social">
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
