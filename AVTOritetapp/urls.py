@@ -1,6 +1,13 @@
 from django.urls import path
-from . import views
+from . import views  # Импортируем наши представления (views)
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', views.index, name='index'),  # Главная страница
+    path('catalog/', views.catalog, name='catalog'),  # Страница каталога
+    path('about/', views.about, name='about'),  # Страница "О нас"
+    path('reviews/', views.reviews, name='reviews'),  # Страница отзывов
+    path('contacts/', views.contacts, name='contacts'),  # Страница контактов
+    path('contact_form/', views.contact_form, name='contact_form'),  # Форма для связи
+    path('login/', views.login, name='login'),  # Страница для входа
+    path('country/<int:country_id>/', views.country_detail, name='country_detail'),
 ]

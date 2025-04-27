@@ -1,3 +1,19 @@
 from django.db import models
 
-# Create your models here.
+class Country(models.Model):
+    name = models.CharField(max_length=100)  # Название страны
+    description = models.TextField()  # Описание страны
+    image = models.ImageField(upload_to='countries/', null=True, blank=True)  # Изображение страны
+
+    def __str__(self):
+        return self.name
+
+class Car(models.Model):
+    country = models.ForeignKey(Country, related_name='cars', on_delete=models.CASCADE)  # Связь с моделью Country
+    model_name = models.CharField(max_length=100)  # Название модели авто
+    year = models.IntegerField()  # Год выпуска
+    price = models.DecimalField(max_digits=10, decimal_places=2)  # Цена авто
+    image = models.ImageField(upload_to='cars/', null=True, blank=True)  # Изображение авто
+
+    def __str__(self):
+        return f"{self.model_name} ({self.year})"

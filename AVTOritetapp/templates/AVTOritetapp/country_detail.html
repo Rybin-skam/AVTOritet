@@ -1,0 +1,20 @@
+{% extends "AVTOritetapp/base.html" %}
+
+{% block title %}Автомобили из {{ country.name }}{% endblock %}
+
+{% block content %}
+<section class="country-detail">
+    <div class="container">
+        <h2>Автомобили из {{ country.name }}</h2>
+        <div class="cars">
+            {% for car in cars %}
+                <div class="car-card">
+                    <img src="{{ car.image.url }}" alt="{{ car.model_name }}">
+                    <h3>{{ car.model_name }} ({{ car.year }})</h3>
+                    <p>Цена: {{ car.price }} руб.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

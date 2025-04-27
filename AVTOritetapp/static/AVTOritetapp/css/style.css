@@ -31,12 +31,15 @@ body {
     width: 100%;
     top: 0;
     z-index: 1000;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15); /* Тень для шапки */
+    transition: background-color 0.3s ease;
 }
 
 .header__inner {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Логотип слева, навигация по центру, кнопки справа */
     align-items: center;
+    width: 100%;
 }
 
 .logo {
@@ -44,25 +47,52 @@ body {
     font-weight: 700;
     color: white;
     text-decoration: none;
+    transition: color 0.3s ease;
 }
 
 .logo span {
     color: var(--secondary);
 }
 
+/* Навигация */
 .nav a {
     color: white;
     text-decoration: none;
     margin-left: 20px;
-    transition: color 0.3s;
+    transition: color 0.3s ease;
 }
 
 .nav a:hover {
     color: var(--secondary);
 }
 
-.header__phone i {
-    margin-right: 5px;
+/* Контакты и кнопки */
+.header__contact {
+    display: flex;
+    align-items: center;
+    gap: 30px; /* Больше расстояния между номером телефона и кнопками */
+    margin-left: auto; /* Перемещаем контейнер кнопок вправо */
+}
+
+.header__phone {
+    font-size: 16px;
+    color: white;
+    margin-right: 20px; /* Отступ между телефоном и кнопками */
+}
+
+.header__contact a {
+    text-decoration: none;
+    background-color: var(--secondary);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.header__contact a:hover {
+    background-color: #c0392b;
+    transform: scale(1.05); /* Легкое увеличение кнопки */
 }
 
 /* Герой */
@@ -74,16 +104,22 @@ body {
     text-align: center;
     padding: 180px 0 100px;
     margin-top: 60px;
+    border-bottom: 5px solid var(--secondary); /* Разделитель снизу */
+    position: relative;
+    transition: padding 0.3s ease; /* Плавное изменение паддингов */
 }
 
 .hero h1 {
     font-size: 48px;
     margin-bottom: 20px;
+    font-weight: 700;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6); /* Тень для текста */
 }
 
 .hero p {
     font-size: 20px;
     margin-bottom: 30px;
+    font-weight: 300;
 }
 
 .btn {
@@ -94,16 +130,19 @@ body {
     border-radius: 5px;
     text-decoration: none;
     font-weight: 700;
-    transition: background 0.3s;
+    transition: background 0.3s ease, transform 0.3s ease;
 }
 
 .btn:hover {
     background: #c0392b;
+    transform: scale(1.1); /* Легкое увеличение кнопки */
 }
 
 /* Секции */
 .section {
     padding: 80px 0;
+    background: #fff;
+    transition: background-color 0.3s ease;
 }
 
 .section h2 {
@@ -111,10 +150,7 @@ body {
     font-size: 36px;
     margin-bottom: 50px;
     color: var(--dark);
-}
-
-.dark-bg {
-    background: var(--light);
+    font-weight: 700;
 }
 
 /* Услуги */
@@ -130,8 +166,14 @@ body {
     padding: 30px;
     background: white;
     border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15); /* Увеличенная тень */
     margin-bottom: 30px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Плавная анимация */
+}
+
+.service-card:hover {
+    transform: translateY(-10px); /* Эффект подъема */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); /* Увеличенная тень */
 }
 
 .service-card i {
@@ -152,8 +194,14 @@ body {
     background: white;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15); /* Увеличенная тень */
     margin-bottom: 30px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.country-card:hover {
+    transform: translateY(-10px); /* Эффект подъема */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); /* Увеличенная тень */
 }
 
 .country-card img {
@@ -206,7 +254,7 @@ body {
     color: white;
     font-size: 24px;
     margin-right: 15px;
-    transition: color 0.3s;
+    transition: color 0.3s ease;
 }
 
 .social a:hover {

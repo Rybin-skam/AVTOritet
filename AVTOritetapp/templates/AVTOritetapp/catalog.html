@@ -1,0 +1,20 @@
+{% extends "AVTOritetapp/base.html" %}
+
+{% block title %}Каталог автомобилей{% endblock %}
+
+{% block content %}
+<section class="catalog">
+    <div class="container">
+        <h2>Каталог стран</h2>
+        <div class="countries">
+            {% for country in countries %}
+                <div class="country-card">
+                    <img src="{{ country.image.url }}" alt="{{ country.name }}">
+                    <h3><a href="{% url 'country_detail' country.id %}">{{ country.name }}</a></h3>
+                    <p>{{ country.description }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
