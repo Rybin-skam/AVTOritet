@@ -35,7 +35,7 @@ def reviews(request):
             messages.success(request, 'Ваш отзыв успешно добавлен!')
             return redirect('reviews')
 
-    return render(request, 'reviews/reviews.html', {
+    return render(request, 'AVTOritetapp/reviews.html', {
         'reviews': reviews,
         'review_form': review_form,
         'media_form': media_form
@@ -45,7 +45,7 @@ def reviews(request):
 @login_required
 def review_list(request):
     reviews = Review.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'reviews/review_list.html', {'reviews': reviews})
+    return render(request, 'AVTOritetapp/review_list.html', {'reviews': reviews})
 
 
 from django.contrib import messages
@@ -80,7 +80,7 @@ def add_review(request):
         review_form = ReviewForm()
         media_form = ReviewMediaForm()
 
-    return render(request, 'reviews/add_review.html', {
+    return render(request, 'AVTOritetapp/add_review.html', {
         'review_form': review_form,
         'media_form': media_form
     })
@@ -112,7 +112,7 @@ def edit_review(request, review_id):
         review_form = ReviewForm(instance=review)
         media_form = ReviewMediaForm()
 
-    return render(request, 'reviews/edit_review.html', {
+    return render(request, 'AVTOritetapp/edit_review.html', {
         'review_form': review_form,
         'media_form': media_form,
         'review': review
@@ -132,8 +132,6 @@ def index(request):
 def about(request):
     return render(request, 'AVTOritetapp/about.html')
 
-def reviews(request):
-    return render(request, 'AVTOritetapp/reviews.html')
 
 def contacts(request):
     return render(request, 'AVTOritetapp/contacts.html')

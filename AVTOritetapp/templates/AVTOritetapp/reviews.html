@@ -1,5 +1,4 @@
 {% extends "AVTOritetapp/base.html" %}
-
 {% load static %}
 
 {% block content %}
@@ -16,45 +15,52 @@
                 {% csrf_token %}
                 <h3>Оставить отзыв</h3>
 
+                <!-- Поле для имени -->
                 <div class="form-group">
                     <label for="guest_name">Ваше имя:</label>
-                    <input type="text" name="guest_name" id="guest_name" class="form-control" required>
+                    <input type="text" name="guest_name" id="guest_name" class="form-control"
+                        {% if user.is_authenticated %}value="{{ user.username }}"{% else %}required{% endif %}>
                 </div>
 
+                <!-- Поле для текста отзыва -->
                 <div class="form-group">
                     <label for="id_text">Текст отзыва:</label>
                     <textarea name="text" id="id_text" class="form-control" rows="4" required></textarea>
                 </div>
 
-                <div class="form-group">
-                    <label>Оценка:</label>
-                    <div class="rating-stars">
-                        {% for i in "54321" %}
-                        <input type="radio" id="star{{ i }}" name="rating" value="{{ i }}" required>
-                        <label for="star{{ i }}">★</label>
-                        {% endfor %}
+                <!-- Поле для рейтинга -->
+                    <div class="rating-wrapper">
+                      <div class="rating-stars">
+                        <input type="radio" id="star5" name="rating" value="5">
+                        <label for="star5">★</label>
+                        <input type="radio" id="star4" name="rating" value="4">
+                        <label for="star4">★</label>
+                        <input type="radio" id="star3" name="rating" value="3">
+                        <label for="star3">★</label>
+                        <input type="radio" id="star2" name="rating" value="2">
+                        <label for="star2">★</label>
+                        <input type="radio" id="star1" name="rating" value="1">
+                        <label for="star1">★</label>
+                      </div>
                     </div>
-                </div>
 
+
+                <!-- Поле для медиафайлов -->
                 <div class="form-group">
-                    <label>Добавить фото/видео:</label>
+                    <label>Добавить фото/видео (необязательно):</label>
                     <input type="file" name="file" class="form-control">
                     <input type="text" name="description" placeholder="Описание файла" class="form-control">
                 </div>
 
+                <!-- Кнопки отправки -->
                 <div class="form-actions">
-                    <form method="POST" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {{ review_form.as_p }}
-                        {{ media_form.as_p }}
-                        <button type="submit" class="btn btn-primary">Отправить</button>
-                    </form>
-
+                    <button type="submit" class="btn btn-submit">Отправить</button>
                     <button type="button" class="btn btn-cancel" id="hide-review-form">Отмена</button>
                 </div>
             </form>
         </div>
 
+        <!-- Список отзывов -->
         <div class="reviews-list">
             {% for review in reviews %}
             <div class="review-item" id="review-{{ review.id }}">
@@ -80,11 +86,12 @@
                         {% for media in review.media.all %}
                         <div class="media-item">
                             {% if media.file.url|lower|slice:"-4:" == '.mp4' %}
-                            <video controls>
+                            <video controls width="250">
                                 <source src="{{ media.file.url }}" type="video/mp4">
+                                Ваш браузер не поддерживает видео.
                             </video>
                             {% else %}
-                            <img src="{{ media.file.url }}" alt="{{ media.description|default:'Фото отзыва' }}">
+                            <img src="{{ media.file.url }}" alt="{{ media.description|default:'Фото отзыва' }}" width="250">
                             {% endif %}
                             {% if media.description %}
                             <p class="media-description">{{ media.description }}</p>
@@ -95,9 +102,11 @@
                     {% endif %}
                 </div>
 
-                {% if user == review.user %}
+                {% if user == review.user or user.is_superuser %}
                 <div class="review-actions">
+                    {% if user == review.user %}
                     <a href="{% url 'edit_review' review.id %}" class="btn-edit">Редактировать</a>
+                    {% endif %}
                     <form action="{% url 'delete_review' review.id %}" method="post" class="delete-form">
                         {% csrf_token %}
                         <button type="submit" class="btn-delete">Удалить</button>
@@ -127,6 +136,10 @@ document.addEventListener('DOMContentLoaded', function() {
         showBtn.addEventListener('click', function() {
             formContainer.style.display = 'block';
             this.style.display = 'none';
+            window.scrollTo({
+                top: formContainer.offsetTop - 20,
+                behavior: 'smooth'
+            });
         });
 
         hideBtn.addEventListener('click', function() {
