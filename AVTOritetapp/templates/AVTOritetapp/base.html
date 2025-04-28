@@ -12,80 +12,99 @@
 
     <!-- Подключение стилей проекта -->
     <link rel="stylesheet" href="{% static 'AVTOritetapp/css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'AVTOritetapp/css/reviews.css' %}">
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        .page-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        main {
+            flex: 1;
+        }
+    </style>
 
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-
-    <!-- Header -->
-    <header class="header" id="header">
-        <div class="container">
-            <div class="header__inner">
-                <a href="/" class="logo">AVTO<span>ritet</span></a>
-                <nav class="nav">
-                    <a href="{% url 'catalog' %}">Каталог</a>
-                    <a href="{% url 'about' %}">О нас</a>
-                    <a href="{% url 'reviews' %}">Отзывы</a>
-                    <a href="{% url 'contacts' %}">Контакты</a>
-                </nav>
-                <div class="header__contact">
-                    <span>+7 (999) 123-45-67</span>
-                    <a href="{% url 'contact_form' %}" class="btn">Связаться</a>
-                    <a href="{% url 'login' %}" class="btn">Войти</a>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Hero section -->
-    {% block hero %}
-    <section class="hero" id="hero">
-        <div class="container">
-            <h1>Автомобили из Японии, Китая и Кореи</h1>
-            <p>Прямые поставки под ключ с гарантией 1 год</p>
-            <a href="#form" class="btn" id="form-button">Оставить заявку</a>
-        </div>
-    </section>
-    {% endblock %}
-
-    <!-- Main Content -->
-    <main>
-        {% block content %}{% endblock %}
-    </main>
-
-    <!-- Footer -->
-    <footer id="contacts" class="footer">
-        <div class="container">
-            <div class="footer__inner">
-                <div class="footer__col">
-                    <h3>Контакты</h3>
-                    <p><i class="fas fa-map-marker-alt"></i> г. Москва, ул. Автоимпортная, 12</p>
-                    <p><i class="fas fa-phone-alt"></i> +7 (999) 123-45-67</p>
-                    <p><i class="fas fa-envelope"></i> info@autoimport.ru</p>
-                </div>
-                <div class="footer__col">
-                    <h3>Мы в соцсетях</h3>
-                    <div class="social">
-                        <a href="#"><i class="fab fa-vk"></i></a>
-                        <a href="#"><i class="fab fa-telegram"></i></a>
-                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+    <div class="page-container">
+        <!-- Header -->
+        <header class="header" id="header">
+            <div class="container">
+                <div class="header__inner">
+                    <a href="/" class="logo">AVTO<span>ritet</span></a>
+                    <nav class="nav">
+                        <a href="{% url 'catalog' %}">Каталог</a>
+                        <a href="{% url 'about' %}">О нас</a>
+                        <a href="{% url 'reviews' %}">Отзывы</a>
+                        <a href="{% url 'contacts' %}">Контакты</a>
+                    </nav>
+                    <div class="header__contact">
+                        <span>+7 (999) 123-45-67</span>
+                        <a href="{% url 'contact_form' %}" class="btn">Связаться</a>
+                        <a href="{% url 'login' %}" class="btn">Войти</a>
                     </div>
                 </div>
             </div>
-        </div>
-    </footer>
+        </header>
+
+        <!-- Hero section -->
+        {% if request.path == '/' %}
+        {% block hero %}
+        <section class="hero" id="hero">
+            <div class="container">
+                <h1>Автомобили из Японии, Китая и Кореи</h1>
+                <p>Прямые поставки под ключ с гарантией 1 год</p>
+                <a href="#form" class="btn" id="form-button">Оставить заявку</a>
+            </div>
+        </section>
+        {% endblock %}
+        {% endif %}
+
+        <!-- Main Content -->
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- Footer -->
+        <footer id="contacts" class="footer">
+            <div class="container">
+                <div class="footer__inner">
+                    <div class="footer__col">
+                        <h3>Контакты</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> г. Москва, ул. Автоимпортная, 12</p>
+                        <p><i class="fas fa-phone-alt"></i> +7 (999) 123-45-67</p>
+                        <p><i class="fas fa-envelope"></i> info@autoimport.ru</p>
+                    </div>
+                    <div class="footer__col">
+                        <h3>Мы в соцсетях</h3>
+                        <div class="social">
+                            <a href="#"><i class="fab fa-vk"></i></a>
+                            <a href="#"><i class="fab fa-telegram"></i></a>
+                            <a href="#"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
 
     {% block extra_js %}
     <script>
-        // Проверяем, если это страница каталога, скрываем всю секцию "hero"
-        if (window.location.pathname === "/catalog/") {
-            const heroSection = document.getElementById("hero");
-            if (heroSection) {
-                heroSection.style.display = "none";  // Скрываем всю секцию hero
+        document.addEventListener("DOMContentLoaded", function() {
+            if (window.location.pathname !== "/") {
+                var heroSection = document.querySelector(".hero");
+                if (heroSection) {
+                    heroSection.style.display = "none";
+                }
             }
-        }
+        });
     </script>
     {% endblock %}
-
 </body>
 </html>

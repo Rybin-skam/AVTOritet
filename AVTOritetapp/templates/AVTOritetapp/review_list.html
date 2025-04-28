@@ -1,0 +1,22 @@
+{% extends "AVTOritetapp/base.html" %}
+
+{% block content %}
+<h1>Мои отзывы</h1>
+<a href="{% url 'add_review' %}" class="btn btn-primary">Добавить отзыв</a>
+<ul>
+    {% for review in reviews %}
+    <li>
+        <h3>{{ review.text }}</h3>
+        <p>Оценка: {{ review.rating }} звёзд</p>
+        <a href="{% url 'edit_review' review.id %}">Редактировать</a>
+        <a href="{% url 'delete_review' review.id %}">Удалить</a>
+        <h4>Медиа</h4>
+        <ul>
+            {% for media in review.media.all %}
+            <li><a href="{{ media.file.url }}" target="_blank">{{ media.description }}</a></li>
+            {% endfor %}
+        </ul>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

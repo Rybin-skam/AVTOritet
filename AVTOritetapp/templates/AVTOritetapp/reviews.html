@@ -1,0 +1,149 @@
+{% extends "AVTOritetapp/base.html" %}
+
+{% load static %}
+
+{% block content %}
+<div class="reviews-container">
+    <div class="container">
+        <h1 class="reviews-title">Отзывы наших клиентов</h1>
+
+        <div class="add-review-section">
+            <button class="btn btn-primary" id="show-review-form">Добавить отзыв</button>
+        </div>
+
+        <div class="review-form-container" id="review-form-container" style="display: none;">
+            <form method="post" enctype="multipart/form-data" class="review-form">
+                {% csrf_token %}
+                <h3>Оставить отзыв</h3>
+
+                <div class="form-group">
+                    <label for="guest_name">Ваше имя:</label>
+                    <input type="text" name="guest_name" id="guest_name" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_text">Текст отзыва:</label>
+                    <textarea name="text" id="id_text" class="form-control" rows="4" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Оценка:</label>
+                    <div class="rating-stars">
+                        {% for i in "54321" %}
+                        <input type="radio" id="star{{ i }}" name="rating" value="{{ i }}" required>
+                        <label for="star{{ i }}">★</label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Добавить фото/видео:</label>
+                    <input type="file" name="file" class="form-control">
+                    <input type="text" name="description" placeholder="Описание файла" class="form-control">
+                </div>
+
+                <div class="form-actions">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ review_form.as_p }}
+                        {{ media_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Отправить</button>
+                    </form>
+
+                    <button type="button" class="btn btn-cancel" id="hide-review-form">Отмена</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="reviews-list">
+            {% for review in reviews %}
+            <div class="review-item" id="review-{{ review.id }}">
+                <div class="review-header">
+                    <div class="review-author">
+                        <span class="author-name">
+                            {{ review.user.username|default:review.guest_name|default:"Аноним" }}
+                        </span>
+                        <div class="review-rating">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <span class="review-date">{{ review.created_at|date:"d.m.Y H:i" }}</span>
+                </div>
+
+                <div class="review-content">
+                    <p>{{ review.text }}</p>
+
+                    {% if review.media.all %}
+                    <div class="review-media">
+                        {% for media in review.media.all %}
+                        <div class="media-item">
+                            {% if media.file.url|lower|slice:"-4:" == '.mp4' %}
+                            <video controls>
+                                <source src="{{ media.file.url }}" type="video/mp4">
+                            </video>
+                            {% else %}
+                            <img src="{{ media.file.url }}" alt="{{ media.description|default:'Фото отзыва' }}">
+                            {% endif %}
+                            {% if media.description %}
+                            <p class="media-description">{{ media.description }}</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if user == review.user %}
+                <div class="review-actions">
+                    <a href="{% url 'edit_review' review.id %}" class="btn-edit">Редактировать</a>
+                    <form action="{% url 'delete_review' review.id %}" method="post" class="delete-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-delete">Удалить</button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+            {% empty %}
+            <div class="no-reviews">
+                <p>Пока нет отзывов. Будьте первым!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Показать/скрыть форму отзыва
+    const showBtn = document.getElementById('show-review-form');
+    const hideBtn = document.getElementById('hide-review-form');
+    const formContainer = document.getElementById('review-form-container');
+
+    if (showBtn && hideBtn && formContainer) {
+        showBtn.addEventListener('click', function() {
+            formContainer.style.display = 'block';
+            this.style.display = 'none';
+        });
+
+        hideBtn.addEventListener('click', function() {
+            formContainer.style.display = 'none';
+            showBtn.style.display = 'block';
+        });
+    }
+
+    // Подтверждение удаления
+    const deleteForms = document.querySelectorAll('.delete-form');
+    deleteForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            if (!confirm('Вы уверены, что хотите удалить этот отзыв?')) {
+                e.preventDefault();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

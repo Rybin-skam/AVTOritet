@@ -1,6 +1,130 @@
 from django.shortcuts import render
 from .models import Country, Car
-from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Review, ReviewMedia
+from .forms import ReviewForm, ReviewMediaForm
+
+
+def reviews(request):
+    reviews = Review.objects.all().order_by('-created_at')
+    review_form = ReviewForm(user=request.user)  # Передаем пользователя в форму
+    media_form = ReviewMediaForm()
+
+    if request.method == 'POST':
+        review_form = ReviewForm(request.POST, user=request.user)
+        media_form = ReviewMediaForm(request.POST, request.FILES)
+
+        if review_form.is_valid():
+            review = review_form.save(commit=False)
+            if request.user.is_authenticated:
+                review.user = request.user
+            else:
+                review.guest_name = request.POST.get('guest_name', 'Аноним')
+            review.save()
+
+            if media_form.is_valid() and request.FILES:
+                for file in request.FILES.getlist('file'):
+                    ReviewMedia.objects.create(
+                        review=review,
+                        file=file,
+                        description=request.POST.get('description', '')
+                    )
+
+            messages.success(request, 'Ваш отзыв успешно добавлен!')
+            return redirect('reviews')
+
+    return render(request, 'reviews/reviews.html', {
+        'reviews': reviews,
+        'review_form': review_form,
+        'media_form': media_form
+    })
+
+
+@login_required
+def review_list(request):
+    reviews = Review.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'reviews/review_list.html', {'reviews': reviews})
+
+
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from .forms import ReviewForm, ReviewMediaForm
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def add_review(request):
+    if request.method == 'POST':
+        review_form = ReviewForm(request.POST)
+        media_form = ReviewMediaForm(request.POST, request.FILES)
+
+        if review_form.is_valid():
+            # Создаем отзыв, но не сохраняем сразу
+            review = review_form.save(commit=False)
+            review.user = request.user
+            review.save()
+
+            # Если форма медиафайлов корректна, сохраняем медиа
+            if media_form.is_valid():
+                for file in request.FILES.getlist('file'):
+                    ReviewMedia.objects.create(
+                        review=review,
+                        file=file,
+                        description=media_form.cleaned_data['description']
+                    )
+
+            messages.success(request, 'Отзыв успешно добавлен!')
+            return redirect('review_list')
+    else:
+        review_form = ReviewForm()
+        media_form = ReviewMediaForm()
+
+    return render(request, 'reviews/add_review.html', {
+        'review_form': review_form,
+        'media_form': media_form
+    })
+
+
+
+@login_required
+def edit_review(request, review_id):
+    review = get_object_or_404(Review, id=review_id, user=request.user)
+
+    if request.method == 'POST':
+        review_form = ReviewForm(request.POST, instance=review)
+        media_form = ReviewMediaForm(request.POST, request.FILES)
+
+        if review_form.is_valid():
+            review_form.save()
+
+            if media_form.is_valid() and request.FILES:
+                for file in request.FILES.getlist('file'):
+                    ReviewMedia.objects.create(
+                        review=review,
+                        file=file,
+                        description=request.POST.get('description', '')
+                    )
+
+            messages.success(request, 'Отзыв успешно обновлен!')
+            return redirect('review_list')
+    else:
+        review_form = ReviewForm(instance=review)
+        media_form = ReviewMediaForm()
+
+    return render(request, 'reviews/edit_review.html', {
+        'review_form': review_form,
+        'media_form': media_form,
+        'review': review
+    })
+
+
+@login_required
+def delete_review(request, review_id):
+    review = get_object_or_404(Review, id=review_id, user=request.user)
+    review.delete()
+    messages.success(request, 'Отзыв успешно удален!')
+    return redirect('review_list')
 
 def index(request):
     return render(request, 'AVTOritetapp/index.html')

@@ -1,0 +1,13 @@
+{% extends "AVTOritetapp/base.html" %}
+
+{% block content %}
+<h1>Добавить новый отзыв</h1>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ review_form.as_p }}
+    {{ media_form.as_p }}
+    <button type="submit">Отправить</button>
+</form>
+
+{% endblock %}

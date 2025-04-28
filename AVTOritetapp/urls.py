@@ -10,4 +10,9 @@ urlpatterns = [
     path('contact_form/', views.contact_form, name='contact_form'),  # Форма для связи
     path('login/', views.login, name='login'),  # Страница для входа
     path('country/<int:country_id>/', views.country_detail, name='country_detail'),
+    path('reviews/', views.reviews, name='reviews'),
+    path('reviews/my/', views.review_list, name='review_list'),
+    path('reviews/add/', views.add_review, name='add_review'),
+    path('reviews/edit/<int:review_id>/', views.edit_review, name='edit_review'),
+    path('reviews/delete/<int:review_id>/', views.delete_review, name='delete_review'),
 ]
