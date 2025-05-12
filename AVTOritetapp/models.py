@@ -51,3 +51,11 @@ class Car(models.Model):
 
     def __str__(self):
         return f"{self.model_name} ({self.year})"
+
+class Order(models.Model):
+    car_model = models.CharField(max_length=255)
+    customer_name = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.customer_name} - {self.car_model}"
