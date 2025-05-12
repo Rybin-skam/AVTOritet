@@ -1,10 +1,46 @@
-from django.shortcuts import render
 from .models import Country, Car
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Review, ReviewMedia
 from .forms import ReviewForm, ReviewMediaForm
+from django.http import JsonResponse
+from .models import Order, User
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib import messages
+
+
+
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('home')  # Поменяйте на нужный URL
+        else:
+            messages.error(request, 'Неверный логин или пароль')
+
+    return render(request, 'login.html')  # Создайте шаблон login.html
+
+
+# Обработка проверки email (для AJAX)
+def check_email(request):
+    email = request.GET.get('email')  # Получаем email, который проверяем
+    exists = User.objects.filter(email=email).exists()  # Проверяем, существует ли такой email
+    return JsonResponse({'exists': exists})  # Возвращаем ответ в формате JSON
+
+# Обработка создания заказа (для AJAX)
+def create_order(request):
+    if request.method == 'POST':
+        car_model = request.POST.get('car_model')
+        customer_name = request.POST.get('customer_name')
+        order = Order.objects.create(car_model=car_model, customer_name=customer_name)  # Создаем заказ
+        return JsonResponse({'status': 'success', 'order_id': order.id})  # Возвращаем ID нового заказа
+    return JsonResponse({'status': 'error'}, status=400)  # Если не POST запрос, возвращаем ошибку
 
 
 def reviews(request):
@@ -139,8 +175,19 @@ def contacts(request):
 def contact_form(request):
     return render(request, 'AVTOritetapp/contact_form.html')
 
+
 def login(request):
-    return render(request, 'AVTOritetapp/login.html')
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            auth_login(request, user)
+            return redirect('/')  # Перенаправляем на главную страницу
+        else:
+            messages.error(request, 'Неверный логин или пароль')
+
+    return render(request, 'AVTOritetapp/login.html')  # Это шаблон, если хотите отдельную страницу
 
 def catalog(request):
     countries = Country.objects.all()  # Получаем все страны из базы данных
@@ -150,3 +197,6 @@ def country_detail(request, country_id):
     country = Country.objects.get(id=country_id)
     cars = country.cars.all()  # Получаем все автомобили для выбранной страны
     return render(request, 'AVTOritetapp/country_detail.html', {'country': country, 'cars': cars})
+
+def profile_view(request):
+    return render(request, 'web/profile.html')

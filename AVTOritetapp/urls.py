@@ -15,4 +15,8 @@ urlpatterns = [
     path('reviews/add/', views.add_review, name='add_review'),
     path('reviews/edit/<int:review_id>/', views.edit_review, name='edit_review'),
     path('reviews/delete/<int:review_id>/', views.delete_review, name='delete_review'),
+    path('check_email/', views.check_email, name='check_email'),  # Проверка email
+    path('create_order/', views.create_order, name='create_order'),  # Создание заказа
+    path('profile/', views.profile_view, name='profile'),
+
 ]

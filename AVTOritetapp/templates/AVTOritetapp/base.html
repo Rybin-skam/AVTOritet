@@ -1,5 +1,5 @@
-{% load static %}
 <!DOCTYPE html>
+{% load static %}
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -47,7 +47,15 @@
                     <div class="header__contact">
                         <span>+7 (999) 123-45-67</span>
                         <a href="{% url 'contact_form' %}" class="btn">Связаться</a>
-                        <a href="{% url 'login' %}" class="btn">Войти</a>
+                        <a href="javascript:void(0);" class="btn" id="login-btn" onclick="toggleLoginModal()">Войти</a><!-- Модальное окно логина (скрыто по умолчанию) -->
+                        <div id="login-modal" class="modal-login" style="display: none;">
+                            <form method="post" action="{% url 'login' %}" class="login-form">
+                                {% csrf_token %}
+                                <input type="text" name="username" placeholder="Логин" required>
+                                <input type="password" name="password" placeholder="Пароль" required>
+                                <button type="submit" class="btn-submit">Войти</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -106,5 +114,25 @@
         });
     </script>
     {% endblock %}
+
+<script>
+    function toggleLoginModal() {
+        const modal = document.getElementById("login-modal");
+        modal.style.display = modal.style.display === "none" ? "block" : "none";
+    }
+
+    // Закрытие модального окна при клике вне его
+    window.onclick = function(event) {
+        const modal = document.getElementById("login-modal");
+        const btn = document.getElementById("login-btn");
+
+        // Закрываем, если клик вне модального окна и кнопки
+        if (event.target !== modal && event.target !== btn && !modal.contains(event.target)) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+
+
 </body>
 </html>

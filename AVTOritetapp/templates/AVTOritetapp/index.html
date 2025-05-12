@@ -16,4 +16,62 @@
         <!-- Твои страны -->
     </div>
 </section>
+
+<!-- Форма проверки email -->
+<h2>Проверка email:</h2>
+<form>
+    <input type="email" id="email" placeholder="Введите ваш email">
+    <span id="email-status"></span> <!-- Тут будет отображаться результат -->
+</form>
+
+<!-- Форма для создания заказа -->
+<h2>Создание заказа:</h2>
+<form id="order-form">
+    <input type="text" name="car_model" placeholder="Модель авто">
+    <input type="text" name="customer_name" placeholder="Ваше имя">
+    <button type="submit">Заказать</button>
+</form>
+<div id="order-status"></div>  <!-- Тут будет отображаться статус заказа -->
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    // Проверка email
+    $('#email').on('input', function() {
+        const email = $(this).val();
+        $.ajax({
+            url: '{% url "check_email" %}',  // Путь к check_email
+            data: { 'email': email },
+            success: function(response) {
+                if(response.exists) {
+                    $('#email-status').text("Этот email уже используется");
+                } else {
+                    $('#email-status').text("Email доступен");
+                }
+            }
+        });
+    });
+
+    // Создание заказа
+    $('#order-form').on('submit', function(e) {
+        e.preventDefault();  // Останавливаем стандартное поведение формы
+        $.ajax({
+            url: '{% url "create_order" %}',  // Путь к create_order
+            type: 'POST',
+            data: {
+                car_model: $('input[name="car_model"]').val(),
+                customer_name: $('input[name="customer_name"]').val(),
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    $('#order-status').text("Заказ создан! Номер заказа: " + response.order_id);
+                }
+            },
+            error: function() {
+                $('#order-status').text("Произошла ошибка при создании заказа.");
+            }
+        });
+    });
+</script>
+
 {% endblock %}
