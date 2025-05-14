@@ -12,21 +12,6 @@ from django.contrib import messages
 
 
 
-
-def login_view(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('home')  # Поменяйте на нужный URL
-        else:
-            messages.error(request, 'Неверный логин или пароль')
-
-    return render(request, 'login.html')  # Создайте шаблон login.html
-
-
 # Обработка проверки email (для AJAX)
 def check_email(request):
     email = request.GET.get('email')  # Получаем email, который проверяем
@@ -175,20 +160,6 @@ def contacts(request):
 def contact_form(request):
     return render(request, 'AVTOritetapp/contact_form.html')
 
-
-def login(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            auth_login(request, user)
-            return redirect('/')  # Перенаправляем на главную страницу
-        else:
-            messages.error(request, 'Неверный логин или пароль')
-
-    return render(request, 'AVTOritetapp/login.html')  # Это шаблон, если хотите отдельную страницу
-
 def catalog(request):
     countries = Country.objects.all()  # Получаем все страны из базы данных
     return render(request, 'AVTOritetapp/catalog.html', {'countries': countries})
@@ -198,5 +169,10 @@ def country_detail(request, country_id):
     cars = country.cars.all()  # Получаем все автомобили для выбранной страны
     return render(request, 'AVTOritetapp/country_detail.html', {'country': country, 'cars': cars})
 
+@login_required
 def profile_view(request):
     return render(request, 'web/profile.html')
+
+@login_required
+def login_view(request):
+    return render(request, 'registration/login.html')

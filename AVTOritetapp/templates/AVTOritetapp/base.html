@@ -115,24 +115,5 @@
     </script>
     {% endblock %}
 
-<script>
-    function toggleLoginModal() {
-        const modal = document.getElementById("login-modal");
-        modal.style.display = modal.style.display === "none" ? "block" : "none";
-    }
-
-    // Закрытие модального окна при клике вне его
-    window.onclick = function(event) {
-        const modal = document.getElementById("login-modal");
-        const btn = document.getElementById("login-btn");
-
-        // Закрываем, если клик вне модального окна и кнопки
-        if (event.target !== modal && event.target !== btn && !modal.contains(event.target)) {
-            modal.style.display = "none";
-        }
-    }
-</script>
-
-
 </body>
 </html>
