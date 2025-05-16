@@ -6,26 +6,11 @@ from .models import Review, ReviewMedia
 from .forms import ReviewForm, ReviewMediaForm
 from django.http import JsonResponse
 from .models import Order, User
-from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login
-from django.contrib import messages
+from .forms import UserRegisterForm
+from .models import City  # Импортируем модель City
+from .models import Country
 
-
-
-# Обработка проверки email (для AJAX)
-def check_email(request):
-    email = request.GET.get('email')  # Получаем email, который проверяем
-    exists = User.objects.filter(email=email).exists()  # Проверяем, существует ли такой email
-    return JsonResponse({'exists': exists})  # Возвращаем ответ в формате JSON
-
-# Обработка создания заказа (для AJAX)
-def create_order(request):
-    if request.method == 'POST':
-        car_model = request.POST.get('car_model')
-        customer_name = request.POST.get('customer_name')
-        order = Order.objects.create(car_model=car_model, customer_name=customer_name)  # Создаем заказ
-        return JsonResponse({'status': 'success', 'order_id': order.id})  # Возвращаем ID нового заказа
-    return JsonResponse({'status': 'error'}, status=400)  # Если не POST запрос, возвращаем ошибку
 
 
 def reviews(request):
@@ -153,7 +138,6 @@ def index(request):
 def about(request):
     return render(request, 'AVTOritetapp/about.html')
 
-
 def contacts(request):
     return render(request, 'AVTOritetapp/contacts.html')
 
@@ -169,10 +153,35 @@ def country_detail(request, country_id):
     cars = country.cars.all()  # Получаем все автомобили для выбранной страны
     return render(request, 'AVTOritetapp/country_detail.html', {'country': country, 'cars': cars})
 
-@login_required
-def profile_view(request):
-    return render(request, 'web/profile.html')
+def register(request):
+    if request.method == 'POST':
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            messages.success(request, f'Аккаунт {username} создан! Теперь войдите.')
+            return redirect('login')
+    else:
+        form = UserRegisterForm()
+    return render(request, 'AVTOritetapp/register.html', {'form': form})
+
 
 @login_required
-def login_view(request):
-    return render(request, 'registration/login.html')
+def profile(request):
+    return render(request, 'AVTOritetapp/profile.html')
+
+def check_username(request):
+    username = request.GET.get('username', None)
+    data = {
+        'is_taken': User.objects.filter(username__iexact=username).exists()
+    }
+    return JsonResponse(data)
+
+def get_cities(request):
+    country_id = request.GET.get('country_id')
+    cities = City.objects.filter(country_id=country_id).values('id', 'name')
+    return JsonResponse(list(cities), safe=False)
+
+def your_view(request):
+    countries = Country.objects.all()
+    return render(request, 'your_template.html', {'countries': countries})

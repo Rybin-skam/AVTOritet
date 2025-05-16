@@ -1,5 +1,8 @@
 from django import forms
 from .models import Review, ReviewMedia
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from django.utils.translation import gettext_lazy as _
 
 class ReviewForm(forms.ModelForm):
     guest_name = forms.CharField(
@@ -44,3 +47,26 @@ class ReviewMediaForm(forms.ModelForm):
                 'placeholder': 'Описание файла...'
             })
         }
+
+
+class UserRegisterForm(UserCreationForm):
+    email = forms.EmailField(label='Электронная почта')
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
+        labels = {
+            'username': 'Имя пользователя',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Переопределяем сообщения валидации
+        self.fields['password1'].help_text = _(
+            "• Ваш пароль не должен быть слишком похож на другую личную информацию.<br>"
+            "• Ваш пароль должен содержать как минимум 8 символов.<br>"
+            "• Пароль не должен быть слишком простым и распространённым.<br>"
+            "• Пароль не может состоять только из цифр."
+        )
+        self.fields['password2'].label = "Подтверждение пароля"
+        self.fields['password2'].help_text = _("Для подтверждения введите, пожалуйста, пароль ещё раз.")

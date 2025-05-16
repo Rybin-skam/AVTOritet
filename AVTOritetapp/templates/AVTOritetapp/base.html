@@ -47,15 +47,15 @@
                     <div class="header__contact">
                         <span>+7 (999) 123-45-67</span>
                         <a href="{% url 'contact_form' %}" class="btn">Связаться</a>
-                        <a href="javascript:void(0);" class="btn" id="login-btn" onclick="toggleLoginModal()">Войти</a><!-- Модальное окно логина (скрыто по умолчанию) -->
-                        <div id="login-modal" class="modal-login" style="display: none;">
-                            <form method="post" action="{% url 'login' %}" class="login-form">
-                                {% csrf_token %}
-                                <input type="text" name="username" placeholder="Логин" required>
-                                <input type="password" name="password" placeholder="Пароль" required>
-                                <button type="submit" class="btn-submit">Войти</button>
-                            </form>
-                        </div>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'profile' %}" class="btn">Профиль ({{ user.username }})</a>
+                        <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn">Выйти</button>
+                        </form>
+                        {% else %}
+                        <a href="{% url 'login' %}" class="btn">Войти</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

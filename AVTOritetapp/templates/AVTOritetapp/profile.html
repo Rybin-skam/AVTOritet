@@ -1,0 +1,13 @@
+{% extends "AVTOritetapp/base.html" %}
+
+{% block content %}
+<div class="container" style="margin-top: 100px;">
+    <div class="profile">
+        <h2>Ваш профиль</h2>
+        <div class="profile-info">
+            <p><strong>Имя пользователя:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

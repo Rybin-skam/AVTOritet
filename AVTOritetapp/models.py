@@ -42,6 +42,14 @@ class Country(models.Model):
     def __str__(self):
         return self.name
 
+class City(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Название города")
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name="Страна")
+
+    def __str__(self):
+        return self.name
+
+
 class Car(models.Model):
     country = models.ForeignKey(Country, related_name='cars', on_delete=models.CASCADE)  # Связь с моделью Country
     model_name = models.CharField(max_length=100)  # Название модели авто
