@@ -122,3 +122,7 @@ STATICFILES_DIRS = [BASE_DIR / 'AVTOritetapp/static']
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Перенаправление после входа/выхода
+LOGIN_REDIRECT_URL = 'profile'
+LOGOUT_REDIRECT_URL = 'index'

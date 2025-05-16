@@ -1,0 +1,173 @@
+/* Общие стили */
+:root {
+  --primary: #2c3e50; /* Темно-синий */
+  --secondary: #e74c3c; /* Красный (оставлен для ошибок) */
+  --light: #ecf0f1;
+  --dark: #2c3e50;
+  --text: #333;
+  --error: #e74c3c;
+  --success: #2ecc71;
+}
+
+/* Логин страница */
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: var(--light);
+  padding: 20px;
+}
+
+.login-container {
+  background: white;
+  padding: 40px 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.login-container h2 {
+  margin-bottom: 20px;
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--primary); /* Темно-синий */
+}
+
+.login-container p {
+  margin: 15px 0;
+  color: var(--text);
+}
+
+.login-container a {
+  color: var(--primary); /* Темно-синий для ссылок */
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.login-container a:hover {
+  text-decoration: underline;
+  color: #1a252f; /* Более темный синий при наведении */
+}
+
+/* Формы */
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  gap: 5px;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.login-container input[type="text"],
+.login-container input[type="email"],
+.login-container input[type="password"] {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.login-container input:focus {
+  border-color: var(--primary); /* Синяя рамка при фокусе */
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.2);
+}
+
+/* Кнопки */
+.login-btn {
+  padding: 12px;
+  background: var(--primary); /* Темно-синяя кнопка */
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.login-btn:hover {
+  background: #1a252f; /* Темнее при наведении */
+  transform: scale(1.05);
+}
+
+.login-btn:active {
+  background: #0e1318; /* Еще темнее при нажатии */
+}
+
+/* Оповещения */
+.alert {
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.alert-success {
+  background-color: rgba(46, 204, 113, 0.2);
+  color: var(--success);
+  border: 1px solid var(--success);
+}
+
+.alert-error {
+  background-color: rgba(231, 76, 60, 0.2);
+  color: var(--error);
+  border: 1px solid var(--error);
+}
+
+.error {
+  color: var(--error);
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+
+/* Стили для подсказок пароля */
+.password-hints {
+  margin-top: 5px;
+  color: #666;
+  font-size: 13px;
+}
+
+.password-hints ul {
+  margin: 5px 0 0 15px;
+  padding: 0;
+}
+
+.password-hints li {
+  margin-bottom: 3px;
+}
+
+.form-hint {
+  display: block;
+  margin-top: 5px;
+  color: #666;
+  font-size: 13px;
+}
+
+.secondary-link {
+  color: var(--secondary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.secondary-link:hover {
+  color: #c0392b;
+  text-decoration: underline;
+}

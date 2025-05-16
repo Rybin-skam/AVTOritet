@@ -1,0 +1,202 @@
+{% extends 'AVTOritetapp/base.html' %}
+{% load static %}
+
+{% block title %}Регистрация — AVTOritet{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'AVTOritetapp/css/login.css' %}">
+<style>
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: var(--light);
+    padding-top: 60px; /* Добавлен отступ сверху */
+    padding-bottom: 60px; /* Добавлен отступ снизу */
+}
+
+.login-container {
+    max-width: 400px;
+    width: 100%;
+    margin-top: 40px; /* Дополнительный отступ сверху */
+    margin-bottom: 40px; /* Дополнительный отступ снизу */
+}
+
+.form-group {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+}
+
+.availability-message, #username-status {
+    margin-top: 5px;
+    font-size: 13px;
+}
+
+.spinner {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#preloader {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+}
+
+#preloader div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    text-align: center;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-page">
+  <div class="login-container">
+    <h2 style="margin-bottom: 30px;">Регистрация</h2> <!-- Увеличен отступ под заголовком -->
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="POST" id="register-form">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="username">Имя пользователя</label>
+        <input type="text" name="username" id="username" class="form-control" required>
+        <div id="username-status" class="availability-message"></div>
+        {% if form.username.errors %}
+          <div class="error">{{ form.username.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="email">Электронная почта</label>
+        <input type="email" name="email" id="email" class="form-control" required>
+        {% if form.email.errors %}
+          <div class="error">{{ form.email.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="password1">Пароль</label>
+        <input type="password" name="password1" id="password1" class="form-control" required>
+        {% if form.password1.errors %}
+          <div class="error">{{ form.password1.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="password2">Подтверждение пароля</label>
+        <input type="password" name="password2" id="password2" class="form-control" required>
+        {% if form.password2.errors %}
+          <div class="error">{{ form.password2.errors }}</div>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="login-btn">Зарегистрироваться</button>
+    </form>
+
+    <p style="margin-top: 20px;">Уже есть аккаунт? <a href="{% url 'login' %}" class="secondary-link">Войти</a></p>
+  </div>
+</div>
+
+<!-- Прелоадер -->
+<div id="preloader">
+    <div>
+        <div class="spinner"></div>
+        <p>Проверка данных...</p>
+    </div>
+</div>
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    function checkUsernameDeferred(username) {
+        var deferred = $.Deferred();
+
+        $('#preloader').show();
+
+        setTimeout(function() {
+            $.ajax({
+                url: '/check_username/',
+                type: 'GET',
+                data: { username: username },
+                dataType: 'json'
+            })
+            .then(function(response) {
+                if(response.is_taken) {
+                    deferred.reject("Имя пользователя уже занято");
+                } else {
+                    deferred.resolve("Имя пользователя доступно");
+                }
+            }, function() {
+                deferred.reject("Ошибка сервера при проверке");
+            })
+            .always(function() {
+                $('#preloader').hide();
+            });
+        }, 1000);
+
+        return deferred.promise();
+    }
+
+    $('#username').on('blur', function() {
+        var username = $(this).val().trim();
+
+        if(username.length >= 3) {
+            checkUsernameDeferred(username)
+                .then(function(message) {
+                    $('#username-status').html('<span style="color:green">✓ ' + message + '</span>');
+                }, function(error) {
+                    $('#username-status').html('<span style="color:red">✖ ' + error + '</span>');
+                });
+        } else {
+            $('#username-status').html('');
+        }
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}
