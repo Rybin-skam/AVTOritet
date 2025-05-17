@@ -26,13 +26,15 @@ class Review(models.Model):
         return f'Отзыв от {self.get_author_name()}'
 class ReviewMedia(models.Model):
     review = models.ForeignKey(Review, related_name='media', on_delete=models.CASCADE)
-    file = models.FileField('Медиафайл', upload_to='reviews/media/')
+    file = models.FileField('Медиафайл', upload_to='reviews/media/%Y/%m/%d/', blank=True, null=True)
     description = models.CharField('Описание', max_length=255, blank=True)
 
     class Meta:
         verbose_name = 'Медиа отзыва'
         verbose_name_plural = 'Медиа отзывов'
 
+    def __str__(self):
+        return f"Медиа для отзыва {self.review.id} - {self.description or 'Без описания'}"
 class Country(models.Model):
     name = models.CharField(max_length=100)  # Название страны
     description = models.TextField()  # Описание страны
