@@ -1,7 +1,9 @@
-/* Основные стили для раздела отзывов */
+/* =========================================================================
+   Основные стили для раздела отзывов
+   ========================================================================= */
 .reviews-container {
     text-align: center;
-    padding: 80px 0 40px; /* Увеличиваем верхний отступ для отступа от шапки */
+    padding: 130px 0 40px; /* Увеличиваем верхний отступ, чтобы шапка не перекрывала */
     background-color: #f9f9f9;
 }
 
@@ -19,12 +21,6 @@
 }
 
 /* Форма отзыва */
-
-.reviews-container {
-    padding: 40px 0;
-    min-height: calc(100vh - 300px); /* Учитываем высоту футера */
-}
-
 .review-form-container {
     display: none; /* Скрыта по умолчанию */
     background: white;
@@ -62,58 +58,59 @@ textarea.form-control {
     resize: vertical;
 }
 
-/* Центрирующий контейнер */
+/* Центрирующий контейнер звезды */
 .rating-wrapper {
-    display: flex;
-    justify-content: center;
-    margin: 20px 0;
+    display: inline-block;
 }
 
-/* Горизонтальные звезды */
 .rating-stars {
     display: flex;
     gap: 8px;
-    flex-direction: row-reverse; /* Для правильной работы селекторов */
+    flex-direction: row-reverse;
+    justify-content: flex-end;
 }
 
-/* Стили звезд */
 .rating-stars input {
     position: absolute;
     opacity: 0;
+    width: 0;
+    height: 0;
 }
 
 .rating-stars label {
     font-size: 32px;
-    color: #f8d64e; /* Золотой цвет по умолчанию */
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-/* При наведении - становятся серыми */
-.rating-stars:hover label {
     color: #ddd;
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease, text-shadow 0.2s ease;
 }
 
-/* Звезды слева от курсора при наведении остаются золотыми */
 .rating-stars label:hover,
 .rating-stars label:hover ~ label {
     color: #f8d64e;
+    transform: scale(1.2);
+    text-shadow: 0 0 8px rgba(248, 214, 78, 0.8);
 }
 
-/* Анимация выбранной звезды */
-.rating-stars input:checked + label {
-    animation: star-pulse 0.5s;
-}
-
-/* Подсветка выбранных звезд (золотые) */
 .rating-stars input:checked + label,
 .rating-stars input:checked ~ label {
     color: #f8d64e;
+    text-shadow: 0 0 5px rgba(248, 214, 78, 0.5);
 }
 
-@keyframes star-pulse {
-    50% { transform: scale(1.3); }
+.rating-stars input:checked + label {
+    animation: star-select 0.4s ease-out;
 }
+
+.rating-stars:hover label {
+    transform: scale(1.05);
+}
+
+@keyframes star-select {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.4) rotate(15deg); text-shadow: 0 0 12px rgba(248, 214, 78, 1); }
+    100% { transform: scale(1.1); text-shadow: 0 0 5px rgba(248, 214, 78, 0.5); }
+}
+
 /* Список отзывов */
 .reviews-list {
     margin-top: 60px; /* Увеличиваем отступ сверху */
@@ -195,22 +192,61 @@ textarea.form-control {
     border-top: 1px solid #eee;
 }
 
-.btn-edit, .btn-delete {
-    padding: 5px 15px;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
+/* Общие стили для всех кнопок */
+.btn-submit,
+.btn-cancel,
+.btn-edit,
+.btn-delete {
+    display: inline-block;
+    padding: 12px 20px !important; /* Одинаковый padding для всех кнопок */
+    border-radius: 5px;
+    font-size: 16px !important; /* Одинаковый размер шрифта */
+    font-weight: 700;
+    text-decoration: none;
     border: none;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+    min-width: 120px !important; /* Фиксированная минимальная ширина для одинакового размера */
+    text-align: center; /* Центрирование текста */
+    color: white;
+    box-sizing: border-box; /* Учёт padding в ширине */
+}
+
+/* Индивидуальные стили для кнопок */
+.btn-submit {
+    background: #3498db; /* Синий для "Отправить"/"Сохранить" */
+}
+
+.btn-submit:hover {
+    background: #2980b9;
+    transform: scale(1.1);
+}
+
+.btn-cancel {
+    background: #7f8c8d; /* Серый для "Отмена" */
+}
+
+.btn-cancel:hover {
+    background: #6c7a89;
+    transform: scale(1.1);
 }
 
 .btn-edit {
-    background: #3498db;
-    color: white;
+    background: #3498db; /* Синий для "Редактировать" */
+}
+
+.btn-edit:hover {
+    background: #2980b9;
+    transform: scale(1.1);
 }
 
 .btn-delete {
-    background: #e74c3c;
-    color: white;
+    background: #e74c3c; /* Красный для "Удалить" */
+}
+
+.btn-delete:hover {
+    background: #c0392b;
+    transform: scale(1.1);
 }
 
 /* Общие стили для страницы */

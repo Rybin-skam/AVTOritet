@@ -92,10 +92,14 @@ def add_review(request):
     })
 
 
-
 @login_required
 def edit_review(request, review_id):
-    review = get_object_or_404(Review, id=review_id, user=request.user)
+    review = get_object_or_404(Review, id=review_id)
+
+    # Проверка прав: пользователь может редактировать свой отзыв, админ — любой
+    if review.user != request.user and not request.user.is_staff:
+        messages.error(request, 'Вы не можете редактировать чужой отзыв.')
+        return redirect('reviews')
 
     if request.method == 'POST':
         review_form = ReviewForm(request.POST, instance=review)
@@ -104,16 +108,18 @@ def edit_review(request, review_id):
         if review_form.is_valid():
             review_form.save()
 
-            if media_form.is_valid() and request.FILES:
-                for file in request.FILES.getlist('file'):
-                    ReviewMedia.objects.create(
-                        review=review,
-                        file=file,
-                        description=request.POST.get('description', '')
-                    )
+            # Обработка медиафайлов, если форма валидна
+            if media_form.is_valid():
+                if request.FILES:
+                    for file in request.FILES.getlist('file'):
+                        ReviewMedia.objects.create(
+                            review=review,
+                            file=file,
+                            description=media_form.cleaned_data.get('description', '')
+                        )
 
-            messages.success(request, 'Отзыв успешно обновлен!')
-            return redirect('review_list')
+            messages.success(request, 'Отзыв успешно обновлён!')
+            return redirect('reviews')
     else:
         review_form = ReviewForm(instance=review)
         media_form = ReviewMediaForm()
@@ -127,10 +133,20 @@ def edit_review(request, review_id):
 
 @login_required
 def delete_review(request, review_id):
-    review = get_object_or_404(Review, id=review_id, user=request.user)
-    review.delete()
-    messages.success(request, 'Отзыв успешно удален!')
-    return redirect('review_list')
+    review = get_object_or_404(Review, id=review_id)
+
+    # Проверяем, может ли пользователь удалить отзыв
+    if review.user != request.user and not request.user.is_staff:
+        messages.error(request, 'Вы не можете удалить чужой отзыв.')
+        return redirect('reviews')
+
+    if request.method == 'POST':
+        review.delete()
+        messages.success(request, 'Отзыв успешно удалён!')
+        return redirect('reviews')
+
+    # Если метод не POST, показываем страницу подтверждения
+    return render(request, 'reviews/confirm_delete.html', {'review': review})
 
 def index(request):
     return render(request, 'AVTOritetapp/index.html')

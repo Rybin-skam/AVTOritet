@@ -1,10 +1,12 @@
-/* Базовые стили */
+/* =========================================================================
+   Базовые стили и переменные
+   ========================================================================= */
 :root {
-    --primary: #2c3e50;
-    --secondary: #e74c3c;
-    --light: #ecf0f1;
-    --dark: #2c3e50;
-    --text: #333;
+    --primary: #2c3e50; /* Основной тёмный цвет (шапка, текст) */
+    --secondary: #e74c3c; /* Акцентный цвет (кнопки, ссылки) */
+    --light: #ecf0f1; /* Светлый фон */
+    --dark: #2c3e50; /* Тёмный фон (подвал) */
+    --text: #333; /* Основной цвет текста */
 }
 
 body {
@@ -15,14 +17,23 @@ body {
     padding: 0;
 }
 
+/* Основной контейнер для центрирования контента */
 .container {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 15px;
+    box-sizing: border-box;
 }
 
-/* Шапка */
+/* Основной контент с отступом от фиксированной шапки */
+.main-content {
+    padding-top: 100px; /* Отступ для предотвращения перекрытия шапкой */
+}
+
+/* =========================================================================
+   Шапка
+   ========================================================================= */
 .header {
     background: var(--primary);
     color: white;
@@ -31,13 +42,13 @@ body {
     width: 100%;
     top: 0;
     z-index: 1000;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15); /* Тень для шапки */
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
     transition: background-color 0.3s ease;
 }
 
 .header__inner {
     display: flex;
-    justify-content: space-between; /* Логотип слева, навигация по центру, кнопки справа */
+    justify-content: space-between;
     align-items: center;
     width: 100%;
 }
@@ -54,7 +65,7 @@ body {
     color: var(--secondary);
 }
 
-/* Навигация */
+/* Навигация в шапке */
 .nav a {
     color: white;
     text-decoration: none;
@@ -66,18 +77,18 @@ body {
     color: var(--secondary);
 }
 
-/* Контакты и кнопки */
+/* Контакты и кнопки в шапке */
 .header__contact {
     display: flex;
     align-items: center;
-    gap: 30px; /* Больше расстояния между номером телефона и кнопками */
-    margin-left: auto; /* Перемещаем контейнер кнопок вправо */
+    gap: 30px;
+    margin-left: auto;
 }
 
 .header__phone {
     font-size: 16px;
     color: white;
-    margin-right: 20px; /* Отступ между телефоном и кнопками */
+    margin-right: 20px;
 }
 
 .header__contact a {
@@ -92,10 +103,82 @@ body {
 
 .header__contact a:hover {
     background-color: #c0392b;
-    transform: scale(1.05); /* Легкое увеличение кнопки */
+    transform: scale(1.05);
 }
 
-/* Герой */
+/* =========================================================================
+   Кнопки (общие стили для всех кнопок)
+   ========================================================================= */
+.btn,
+.btn-submit,
+.btn-cancel,
+.btn-edit,
+.btn-delete,
+form .btn {
+    display: inline-block;
+    color: white;
+    padding: 12px 20px; /* Одинаковый padding для всех кнопок */
+    border-radius: 5px;
+    font-size: 16px; /* Одинаковый размер шрифта */
+    font-weight: 700;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+    min-width: 120px; /* Фиксированная минимальная ширина для одинакового размера */
+    text-align: center; /* Центрирование текста */
+    box-sizing: border-box; /* Учёт padding в ширине */
+}
+
+/* Стили для конкретных кнопок */
+.btn {
+    background: var(--secondary); /* Общие кнопки (например, в герое) */
+}
+
+.btn:hover {
+    background: #c0392b;
+    transform: scale(1.1);
+}
+
+.btn-submit {
+    background: #3498db; /* Синий для "Отправить"/"Сохранить" */
+}
+
+.btn-submit:hover {
+    background: #2980b9;
+    transform: scale(1.1);
+}
+
+.btn-cancel {
+    background: #7f8c8d; /* Серый для "Отмена" */
+}
+
+.btn-cancel:hover {
+    background: #6c7a89;
+    transform: scale(1.1);
+}
+
+.btn-edit {
+    background: #3498db; /* Синий для "Редактировать" */
+}
+
+.btn-edit:hover {
+    background: #2980b9;
+    transform: scale(1.1);
+}
+
+.btn-delete {
+    background: var(--secondary); /* Красный для "Удалить" */
+}
+
+.btn-delete:hover {
+    background: #c0392b;
+    transform: scale(1.1);
+}
+
+/* =========================================================================
+   Герой
+   ========================================================================= */
 .hero {
     background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../img/hero-bg.jpg');
     background-size: cover;
@@ -104,16 +187,16 @@ body {
     text-align: center;
     padding: 180px 0 100px;
     margin-top: 60px;
-    border-bottom: 5px solid var(--secondary); /* Разделитель снизу */
+    border-bottom: 5px solid var(--secondary);
     position: relative;
-    transition: padding 0.3s ease; /* Плавное изменение паддингов */
+    transition: padding 0.3s ease;
 }
 
 .hero h1 {
     font-size: 48px;
     margin-bottom: 20px;
     font-weight: 700;
-    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6); /* Тень для текста */
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
 }
 
 .hero p {
@@ -122,30 +205,9 @@ body {
     font-weight: 300;
 }
 
-.btn,
-.btn-submit,
-form .btn {
-    display: inline-block;
-    background: var(--secondary);
-    color: white;
-    padding: 12px 30px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: 700;
-    transition: background 0.3s ease, transform 0.3s ease;
-    border: none;
-    cursor: pointer;
-}
-
-.btn:hover,
-.btn-submit:hover,
-form .btn:hover {
-    background: #c0392b;
-    transform: scale(1.1);
-}
-
-
-/* Секции */
+/* =========================================================================
+   Секции
+   ========================================================================= */
 .section {
     padding: 80px 0;
     background: #fff;
@@ -173,14 +235,14 @@ form .btn:hover {
     padding: 30px;
     background: white;
     border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15); /* Увеличенная тень */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
     margin-bottom: 30px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Плавная анимация */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .service-card:hover {
-    transform: translateY(-10px); /* Эффект подъема */
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); /* Увеличенная тень */
+    transform: translateY(-10px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 .service-card i {
@@ -201,14 +263,14 @@ form .btn:hover {
     background: white;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15); /* Увеличенная тень */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
     margin-bottom: 30px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .country-card:hover {
-    transform: translateY(-10px); /* Эффект подъема */
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); /* Увеличенная тень */
+    transform: translateY(-10px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 .country-card img {
@@ -227,7 +289,9 @@ form .btn:hover {
     margin: 0;
 }
 
-/* Подвал */
+/* =========================================================================
+   Подвал
+   ========================================================================= */
 .footer {
     background: var(--dark);
     color: white;
@@ -268,23 +332,9 @@ form .btn:hover {
     color: var(--secondary);
 }
 
-/* Адаптив */
-@media (max-width: 768px) {
-    .services, .countries {
-        flex-direction: column;
-    }
-
-    .service-card, .country-card {
-        flex: 0 0 100%;
-        margin-bottom: 20px;
-    }
-
-    .hero h1 {
-        font-size: 36px;
-    }
-}
-
-/* Стили для модального окна входа */
+/* =========================================================================
+   Модальное окно
+   ========================================================================= */
 .modal {
     position: fixed;
     top: 0;
@@ -297,11 +347,10 @@ form .btn:hover {
     align-items: center;
 }
 
-
 /* Модальное окно входа */
 .modal-login {
     position: absolute;
-    top: 50px; /* Расстояние от кнопки "Войти" */
+    top: 50px;
     right: 0;
     background: #ffffff;
     border: 1px solid #ddd;
@@ -323,19 +372,47 @@ form .btn:hover {
 }
 
 .modal-login .btn-submit {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    width: 100%;
-    font-size: 14px;
-    border-radius: 5px;
-    transition: background 0.3s;
+    background-color: #4CAF50; /* Зелёный для кнопки входа */
+    padding: 12px 20px; /* Синхронизация с другими кнопками */
+    min-width: 120px;
+    font-size: 16px;
 }
 
 .modal-login .btn-submit:hover {
     background-color: #45a049;
+    transform: scale(1.1);
+}
+
+/* =========================================================================
+   Адаптивность
+   ========================================================================= */
+@media (max-width: 768px) {
+    .services, .countries {
+        flex-direction: column;
+    }
+
+    .service-card, .country-card {
+        flex: 0 0 100%;
+        margin-bottom: 20px;
+    }
+
+    .hero h1 {
+        font-size: 36px;
+    }
+
+    .header__inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header__contact {
+        margin-top: 10px;
+        gap: 15px;
+    }
+
+    .nav a {
+        margin-left: 10px;
+    }
 }
 
 
