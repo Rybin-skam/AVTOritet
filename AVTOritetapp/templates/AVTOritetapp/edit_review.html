@@ -1,14 +1,59 @@
 {% extends "AVTOritetapp/base.html" %}
-
+{% load static %}
 
 {% block content %}
-<h1>Редактировать отзыв</h1>
+<div class="reviews-container">
+    <div class="container">
+        <h1>Редактировать отзыв</h1>
 
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ review_form.as_p }}
-    {{ media_form.as_p }}
-    <button type="submit">Сохранить изменения</button>
-</form>
+        <form method="POST" enctype="multipart/form-data" class="review-form">
+            {% csrf_token %}
+            <!-- Поле для имени -->
+            <div class="form-group">
+                <label for="guest_name">Ваше имя:</label>
+                <input type="text" name="guest_name" id="guest_name" class="form-control"
+                    value="{{ review.guest_name|default:review.user.username|default:'' }}"
+                    {% if user.is_authenticated %}readonly{% else %}required{% endif %}>
+            </div>
 
+            <!-- Поле для текста отзыва -->
+            <div class="form-group">
+                <label for="id_text">Текст отзыва:</label>
+                {{ review_form.text }}
+            </div>
+
+            <!-- Поле для рейтинга -->
+            <div class="form-group">
+                <label>Оценка:</label>
+                <div class="rating-wrapper">
+                    <div class="rating-stars">
+                        <input type="radio" id="star5" name="rating" value="5" {% if review_form.rating.value == 5 %}checked{% endif %}>
+                        <label for="star5" title="5 звёзд">★</label>
+                        <input type="radio" id="star4" name="rating" value="4" {% if review_form.rating.value == 4 %}checked{% endif %}>
+                        <label for="star4" title="4 звезды">★</label>
+                        <input type="radio" id="star3" name="rating" value="3" {% if review_form.rating.value == 3 %}checked{% endif %}>
+                        <label for="star3" title="3 звезды">★</label>
+                        <input type="radio" id="star2" name="rating" value="2" {% if review_form.rating.value == 2 %}checked{% endif %}>
+                        <label for="star2" title="2 звезды">★</label>
+                        <input type="radio" id="star1" name="rating" value="1" {% if review_form.rating.value == 1 %}checked{% endif %}>
+                        <label for="star1" title="1 звезда">★</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Поле для медиафайлов -->
+            <div class="form-group">
+                <label>Добавить фото/видео (необязательно):</label>
+                {{ media_form.file }}
+                {{ media_form.description }}
+            </div>
+
+            <!-- Кнопки отправки -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-submit">Сохранить</button>
+                <a href="{% url 'reviews' %}" class="btn btn-cancel">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}

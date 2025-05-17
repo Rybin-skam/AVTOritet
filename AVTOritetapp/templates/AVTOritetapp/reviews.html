@@ -31,15 +31,15 @@
                 <!-- Поле для рейтинга -->
                     <div class="rating-wrapper">
                       <div class="rating-stars">
-                        <input type="radio" id="star5" name="rating" value="5">
+                        <input type="radio" id="star5" name="rating" value="5" {% if form.rating.value == 5 %}checked{% endif %}>
                         <label for="star5">★</label>
-                        <input type="radio" id="star4" name="rating" value="4">
+                        <input type="radio" id="star4" name="rating" value="4" {% if form.rating.value == 4 %}checked{% endif %}>
                         <label for="star4">★</label>
-                        <input type="radio" id="star3" name="rating" value="3">
+                        <input type="radio" id="star3" name="rating" value="3" {% if form.rating.value == 3 %}checked{% endif %}>
                         <label for="star3">★</label>
-                        <input type="radio" id="star2" name="rating" value="2">
+                        <input type="radio" id="star2" name="rating" value="2" {% if form.rating.value == 2 %}checked{% endif %}>
                         <label for="star2">★</label>
-                        <input type="radio" id="star1" name="rating" value="1">
+                        <input type="radio" id="star1" name="rating" value="1" {% if form.rating.value == 1 %}checked{% endif %}>
                         <label for="star1">★</label>
                       </div>
                     </div>
