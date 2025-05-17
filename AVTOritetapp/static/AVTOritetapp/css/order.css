@@ -1,0 +1,14 @@
+/* Стили для выпадающих списков */
+.form-control {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+/* Стиль для disabled состояния */
+select:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+}

@@ -1,0 +1,63 @@
+<div class="form-group">
+    <label for="country-select">Страна</label>
+    <select id="country-select" class="form-control">
+        <option value="">Выберите страну</option>
+        {% for country in countries %}
+            <option value="{{ country.id }}">{{ country.name }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div class="form-group">
+    <label for="city-select">Город</label>
+    <select id="city-select" class="form-control" disabled>
+        <option value="">Сначала выберите страну</option>
+    </select>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const countrySelect = document.getElementById('country-select');
+    const citySelect = document.getElementById('city-select');
+
+    countrySelect.addEventListener('change', function() {
+        const countryId = this.value;
+
+        // Сброс и отображение загрузки
+        citySelect.innerHTML = '<option value="">Загрузка городов...</option>';
+        citySelect.Disabled = true;
+
+        if (countryId) {
+            fetch(`/get_cities/?country_id=${countryId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Ошибка сети');
+                    return response.json();
+                })
+                .then(cities => {
+                    citySelect.innerHTML = '<option value="">Выберите город</option>';
+
+                    if (cities.length === 0) {
+                        citySelect.innerHTML = '<option value="">Нет доступных городов</option>';
+                    } else {
+                        cities.forEach(city => {
+                            const option = document.createElement('option');
+                            option.value = city.id;
+                            option.textContent = city.name;
+                            citySelect.appendChild(option);
+                        });
+                        citySelect.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    citySelect.innerHTML = '<option value="">Ошибка загрузки</option>';
+                });
+        } else {
+            citySelect.innerHTML = '<option value="">Сначала выберите страну</option>';
+            citySelect.disabled = true;
+        }
+    });
+});
+</script>
+{% endblock %}
