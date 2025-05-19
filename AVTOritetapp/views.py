@@ -10,7 +10,9 @@ from django.contrib.auth import authenticate, login as auth_login
 from .forms import UserRegisterForm
 from .models import City  # Импортируем модель City
 from .models import Country
-
+from django.contrib.admin.views.decorators import staff_member_required
+from .models import Car, Review
+from .forms import CarForm, ReviewForm
 
 
 def reviews(request):
@@ -161,8 +163,21 @@ def contact_form(request):
     return render(request, 'AVTOritetapp/contact_form.html')
 
 def catalog(request):
-    countries = Country.objects.all()  # Получаем все страны из базы данных
-    return render(request, 'AVTOritetapp/catalog.html', {'countries': countries})
+    country = request.GET.get('country', 'japan')  # По умолчанию Япония
+    cars = Car.objects.filter(country=country)
+    return render(request, 'AVTOritetapp/catalog.html', {'cars': cars, 'country': country})
+
+@staff_member_required  # Только для администраторов
+def add_car(request):
+    if request.method == "POST":
+        form = CarForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('catalog')
+    else:
+        form = CarForm()
+    return render(request, 'AVTOritetapp/add_car.html', {'form': form})
+
 
 def country_detail(request, country_id):
     country = Country.objects.get(id=country_id)

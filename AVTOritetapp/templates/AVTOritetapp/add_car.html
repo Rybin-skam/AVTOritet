@@ -1,0 +1,49 @@
+{% extends 'AVTOritetapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="add-car-section">
+    <div class="container">
+        <h1>Добавить автомобиль</h1>
+        <div class="add-car-form">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="id_country">Страна:</label>
+                    {{ form.country }}
+                </div>
+                <div class="form-group">
+                    <label for="id_model">Модель:</label>
+                    {{ form.model }}
+                </div>
+                <div class="form-group">
+                    <label for="id_photo">Фото:</label>
+                    {{ form.photo }}
+                </div>
+                <div class="form-group">
+                    <label for="id_year_start">Год начала выпуска:</label>
+                    {{ form.year_start }}
+                </div>
+                <div class="form-group">
+                    <label for="id_year_end">Год окончания выпуска (опционально):</label>
+                    {{ form.year_end }}
+                </div>
+                <div class="form-group">
+                    <label for="id_engine_volume">Объём двигателя (л):</label>
+                    {{ form.engine_volume }}
+                </div>
+                <div class="form-group">
+                    <label for="id_price_min">Минимальная цена (₽):</label>
+                    {{ form.price_min }}
+                </div>
+                <div class="form-group">
+                    <label for="id_price_max">Максимальная цена (₽):</label>
+                    {{ form.price_max }}
+                </div>
+                <button type="submit" class="btn btn-submit">Добавить</button>
+                <a href="{% url 'catalog' %}" class="btn btn-cancel">Отмена</a>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
