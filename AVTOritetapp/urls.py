@@ -16,11 +16,13 @@ urlpatterns = [
     path('reviews/edit/<int:review_id>/', views.edit_review, name='edit_review'),
     path('reviews/delete/<int:review_id>/', views.delete_review, name='delete_review'),
     path('login/', auth_views.LoginView.as_view(template_name='AVTOritetapp/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='index'), name='logout'),
+    path('logout/', views.CustomLogoutView.as_view(), name='logout'),
     path('register/', views.register, name='register'),
+    path('verify/<str:token>/', views.verify_email, name='verify_email'),
+    path('resend-verification/', views.resend_verification_email, name='resend_verification'),
     path('profile/', views.profile, name='profile'),
-
     path('check_username/', views.check_username, name='check_username'),
     path('get_cities/', views.get_cities, name='get_cities'),
+
 
 ]

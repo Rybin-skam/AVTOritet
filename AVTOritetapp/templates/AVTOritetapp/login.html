@@ -5,6 +5,28 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'AVTOritetapp/css/login.css' %}">
+<style>
+    .password-wrapper {
+        position: relative;
+        width: 100%;
+    }
+    .password-wrapper input {
+        width: 100%;
+        padding-right: 40px;
+        box-sizing: border-box;
+    }
+    .toggle-password {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+        padding: 0;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -36,7 +58,10 @@
 
       <div class="form-group">
         <label for="id_password">Пароль</label>
-        <input type="password" name="password" id="id_password" required>
+        <div class="password-wrapper">
+          <input type="password" name="password" id="id_password" required>
+          <button type="button" class="toggle-password" onclick="togglePasswordVisibility('id_password', this)">👁</button>
+        </div>
       </div>
 
       <button type="submit" class="login-btn">Войти</button>
@@ -45,4 +70,19 @@
     <p>Нет аккаунта? <a href="{% url 'register' %}">Зарегистрироваться</a></p>
   </div>
 </div>
+
+{% block extra_js %}
+<script>
+function togglePasswordVisibility(inputId, button) {
+    const passwordInput = document.getElementById(inputId);
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        button.textContent = '👁‍🗨';
+    } else {
+        passwordInput.type = 'password';
+        button.textContent = '👁';
+    }
+}
+</script>
+{% endblock %}
 {% endblock %}

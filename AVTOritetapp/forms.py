@@ -3,6 +3,8 @@ from .models import Review, ReviewMedia
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
+from .models import Profile
 
 class ReviewForm(forms.ModelForm):
     guest_name = forms.CharField(
@@ -48,9 +50,12 @@ class ReviewMediaForm(forms.ModelForm):
             })
         }
 
-
 class UserRegisterForm(UserCreationForm):
-    email = forms.EmailField(label='Электронная почта')
+    email = forms.EmailField(
+        label='Электронная почта',
+        required=True,  # Явно указываем, что поле обязательно
+        help_text="На этот email будет отправлено письмо с подтверждением"  # Добавляем подсказку
+    )
 
     class Meta:
         model = User
@@ -61,7 +66,7 @@ class UserRegisterForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Переопределяем сообщения валидации
+        # Переопределяем сообщения валидации (оставляем ваше текущее форматирование)
         self.fields['password1'].help_text = _(
             "• Ваш пароль не должен быть слишком похож на другую личную информацию.<br>"
             "• Ваш пароль должен содержать как минимум 8 символов.<br>"
@@ -70,3 +75,23 @@ class UserRegisterForm(UserCreationForm):
         )
         self.fields['password2'].label = "Подтверждение пароля"
         self.fields['password2'].help_text = _("Для подтверждения введите, пожалуйста, пароль ещё раз.")
+
+    def clean_email(self):
+        """Проверяем, что email уникален"""
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise ValidationError(
+                "Этот email уже зарегистрирован. "
+                "Используйте другой email или восстановите пароль, если это ваш аккаунт."
+            )
+        return email
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['avatar', 'gender', 'birth_date', 'country']
+
+    def __init__(self, *args, **kwargs):
+        super(ProfileForm, self).__init__(*args, **kwargs)
+        # Можно добавить кастомные атрибуты или валидацию здесь
