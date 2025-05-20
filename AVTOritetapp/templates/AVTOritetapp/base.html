@@ -47,7 +47,7 @@
                     </nav>
                     <div class="header__contact">
                         <span>+7 (999) 123-45-67</span>
-                        <a href="{% url 'contact_form' %}" class="btn">Связаться</a>
+                        <a href="{% url 'contact_form' %}" class="btn">Заказать авто</a>
                         {% if user.is_authenticated %}
                         <a href="{% url 'profile' %}" class="btn">Профиль ({{ user.username }})</a>
                         <form action="{% url 'logout' %}" method="post" style="display: inline;">
@@ -62,18 +62,19 @@
             </div>
         </header>
 
-        <!-- Hero section -->
-        {% if request.path == '/' %}
-        {% block hero %}
-        <section class="hero" id="hero">
-            <div class="container">
-                <h1>Автомобили из Японии, Китая и Кореи</h1>
-                <p>Прямые поставки под ключ с гарантией 1 год</p>
-                <a href="#form" class="btn" id="form-button">Оставить заявку</a>
-            </div>
-        </section>
-        {% endblock %}
-        {% endif %}
+
+{% if request.path == '/' %}
+{% block hero %}
+<section class="hero" id="hero" style="background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('{% static "AVTOritetapp/images/drift.gif" %}');">
+    <div class="container hero-content">
+        <h1>Автомобили из Японии, Китая и Кореи</h1>
+        <p>Прямые поставки под ключ с гарантией 1 год</p>
+        <a href="#form" class="btn" id="form-button">Оставить заявку</a>
+    </div>
+</section>
+{% endblock %}
+{% endif %}
+
 
         <!-- Main Content -->
         <main class="main-content {% if request.path == '/catalog/' %} catalog-page {% endif %}">
