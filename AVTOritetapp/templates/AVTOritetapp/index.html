@@ -1,22 +1,218 @@
 {% extends "AVTOritetapp/base.html" %}
+{% load static %}
 
 {% block title %}Главная | AutoImport{% endblock %}
 
 {% block content %}
+<!-- Секция услуг -->
 <section id="services" class="section">
     <div class="container">
-        <h2>Наши услуги</h2>
-        <!-- Твои карточки услуг -->
+        <h2 class="section-title">Наши услуги</h2>
+        <div class="services-grid">
+            <div class="service-card" data-aos="fade-up">
+                <i class="fas fa-car service-icon"></i>
+                <h3>Поставка автомобилей</h3>
+                <p>Прямые поставки авто из Японии, Китая и Кореи. Полный цикл: от выбора до доставки.</p>
+            </div>
+            <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+                <i class="fas fa-shield-alt service-icon"></i>
+                <h3>Гарантия 1 год</h3>
+                <p>Мы предоставляем гарантию на все автомобили сроком на 1 год.</p>
+            </div>
+            <div class="service-card" data-aos="fade-up" data-aos-delay="200">
+                <i class="fas fa-headset service-icon"></i>
+                <h3>Поддержка 24/7</h3>
+                <p>Наши специалисты готовы помочь вам в любое время суток.</p>
+            </div>
+        </div>
     </div>
 </section>
 
-<section id="countries" class="section dark-bg">
+<!-- Секция стран -->
+<section id="countries" class="section neutral-bg">
     <div class="container">
-        <h2>Страны импорта</h2>
-        <!-- Твои страны -->
+        <h2 class="section-title country-title">Страны импорта</h2>
+        <div class="countries-grid">
+            <div class="country-card" data-aos="zoom-in">
+                <img src="{% static 'AVTOritetapp/images/japan-flag.png' %}" alt="Япония" class="country-flag">
+                <h3>Япония</h3>
+                <p>Качественные и надёжные автомобили от ведущих японских производителей.</p>
+            </div>
+            <div class="country-card" data-aos="zoom-in" data-aos-delay="100">
+                <img src="{% static 'AVTOritetapp/images/china-flag.png' %}" alt="Китай" class="country-flag">
+                <h3>Китай</h3>
+                <p>Современные технологии и доступные цены на автомобили из Китая.</p>
+            </div>
+            <div class="country-card" data-aos="zoom-in" data-aos-delay="200">
+                <img src="{% static 'AVTOritetapp/images/korea-flag.png' %}" alt="Корея" class="country-flag">
+                <h3>Корея</h3>
+                <p>Стильные и инновационные автомобили от корейских брендов.</p>
+            </div>
+        </div>
     </div>
 </section>
+{% endblock %}
 
+{% block extra_css %}
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<style>
+/* Убираем возможные конфликты с body */
+body {
+    margin: 0;
+    padding: 0;
+}
+
+/* Общие стили для секций */
+.section {
+    padding: 80px 0;
+    text-align: center;
+}
+
+/* Секция услуг */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.service-card {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+}
+
+.service-icon {
+    font-size: 40px;
+    color: #3498db;
+    margin-bottom: 20px;
+}
+
+.service-card h3 {
+    font-size: 24px;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.service-card p {
+    color: #7f8c8d;
+    line-height: 1.6;
+}
+
+/* Секция стран */
+.neutral-bg {
+    background: #f5f6fa;
+    color: #2c3e50;
+    position: relative;
+    padding-bottom: 60px;
+}
+
+.country-title {
+    color: #34495e;
+}
+
+.countries-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.country-card {
+    background: rgba(52, 73, 94, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+}
+
+.country-card:hover {
+    background: rgba(52, 73, 94, 0.2);
+}
+
+.country-flag {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 15px;
+}
+
+.country-card h3 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.country-card p {
+    color: #7f8c8d;
+    line-height: 1.6;
+}
+
+/* Анимации */
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .hero {
+        height: 400px;
+        padding-top: 60px; /* Уменьшаем отступ для мобильных */
+    }
+
+    .hero h1 {
+        font-size: 32px;
+    }
+
+    .hero p {
+        font-size: 18px;
+    }
+
+    .section-title {
+        font-size: 28px;
+    }
+
+    .service-card, .country-card {
+        padding: 20px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+$(document).ready(function() {
+    // Инициализация AOS для анимаций
+    AOS.init({
+        duration: 800,
+        once: true
+    });
 
+    // Плавная прокрутка
+    $('a[href*="#"]').not('[href="#"]').click(function(event) {
+        if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
+            event.preventDefault();
+            var target = $(this.hash);
+            target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+            if (target.length) {
+                $('html, body').animate({
+                    scrollTop: target.offset().top - 80 // Учитываем высоту шапки
+                }, 1000);
+                return false;
+            }
+        }
+    });
+});
+</script>
 {% endblock %}

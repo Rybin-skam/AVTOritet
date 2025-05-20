@@ -180,16 +180,15 @@ form .btn {
    Герой
    ========================================================================= */
 .hero {
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../img/hero-bg.jpg');
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
     color: white;
     text-align: center;
-    padding: 180px 0 100px;
+    padding: 160px 0 100px;
     margin-top: 60px;
     border-bottom: 5px solid var(--secondary);
     position: relative;
-    transition: padding 0.3s ease;
 }
 
 .hero h1 {
@@ -204,6 +203,20 @@ form .btn {
     margin-bottom: 30px;
     font-weight: 300;
 }
+
+.hero .btn {
+    background-color: var(--primary);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 18px;
+    transition: background 0.3s ease;
+}
+
+.hero .btn:hover {
+    background-color: var(--secondary);
+}
+
 
 /* =========================================================================
    Секции
