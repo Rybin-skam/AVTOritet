@@ -57,15 +57,31 @@ class City(models.Model):
         return self.name
 
 
+# Выбор страны
+COUNTRY_CHOICES = (
+    ('japan', 'Япония'),
+    ('china', 'Китай'),
+    ('korea', 'Корея'),
+)
+
 class Car(models.Model):
-    country = models.ForeignKey(Country, related_name='cars', on_delete=models.CASCADE)  # Связь с моделью Country
-    model_name = models.CharField(max_length=100)  # Название модели авто
-    year = models.IntegerField()  # Год выпуска
-    price = models.DecimalField(max_digits=10, decimal_places=2)  # Цена авто
-    image = models.ImageField(upload_to='cars/', null=True, blank=True)  # Изображение авто
+    country = models.CharField(max_length=10, choices=COUNTRY_CHOICES)
+    model = models.CharField(max_length=100)  # Название модели авто
+    photo = models.ImageField(upload_to='cars/photos/', null=True, blank=True)  # Фото
+    year_start = models.IntegerField(null=True)  # Начало выпуска
+    year_end = models.IntegerField(null=True, blank=True)  # Конец выпуска (опционально)
+    engine_volume = models.FloatField(null=True)  # Объём двигателя (литры)
+    price_min = models.DecimalField(max_digits=10, decimal_places=2, null=True)  # Минимальная цена
+    price_max = models.DecimalField(max_digits=10, decimal_places=2, null=True)  # Максимальная цена
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
 
     def __str__(self):
-        return f"{self.model_name} ({self.year})"
+        return f"{self.get_country_display()} - {self.model}"
+
+    class Meta:
+        verbose_name = "Автомобиль"
+        verbose_name_plural = "Автомобили"
 
 
 class Order(models.Model):

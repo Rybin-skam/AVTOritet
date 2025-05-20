@@ -13,6 +13,7 @@
     <!-- Подключение стилей проекта -->
     <link rel="stylesheet" href="{% static 'AVTOritetapp/css/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'AVTOritetapp/css/reviews.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'AVTOritetapp/css/catalog.css' %}">
 
     <style>
         html, body {
@@ -75,7 +76,7 @@
         {% endif %}
 
         <!-- Main Content -->
-        <main>
+        <main class="main-content {% if request.path == '/catalog/' %} catalog-page {% endif %}">
             {% block content %}{% endblock %}
         </main>
 
@@ -115,6 +116,5 @@
         });
     </script>
     {% endblock %}
-
 </body>
 </html>

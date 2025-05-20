@@ -1,10 +1,13 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views  # Импортируем наши представления (views)
 
 urlpatterns = [
     path('', views.index, name='index'),
     path('catalog/', views.catalog, name='catalog'),  # Страница каталога
+    path('add_car/', views.add_car, name='add_car'),
     path('about/', views.about, name='about'),  # Страница "О нас"
     path('reviews/', views.reviews, name='reviews'),  # Страница отзывов
     path('contacts/', views.contacts, name='contacts'),  # Страница контактов
@@ -24,5 +27,6 @@ urlpatterns = [
     path('check_username/', views.check_username, name='check_username'),
     path('get_cities/', views.get_cities, name='get_cities'),
 
-
-]
+urlpatterns = [
+    # ... все ваши пути ...
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

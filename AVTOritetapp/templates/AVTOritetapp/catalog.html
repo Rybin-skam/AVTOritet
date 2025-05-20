@@ -1,20 +1,53 @@
-{% extends "AVTOritetapp/base.html" %}
-
-{% block title %}Каталог автомобилей{% endblock %}
+{% extends 'AVTOritetapp/base.html' %}
+{% load static %}
+{% load humanize %}
 
 {% block content %}
-<section class="catalog">
+<section class="catalog-section">
     <div class="container">
-        <h2>Каталог стран</h2>
-        <div class="countries">
-            {% for country in countries %}
-                <div class="country-card">
-                    <img src="{{ country.image.url }}" alt="{{ country.name }}">
-                    <h3><a href="{% url 'country_detail' country.id %}">{{ country.name }}</a></h3>
-                    <p>{{ country.description }}</p>
-                </div>
-            {% endfor %}
+        <h1>Каталог автомобилей</h1>
+
+        <!-- Выбор страны -->
+        <div class="country-tabs">
+            <a href="?country=japan" class="tab {% if country == 'japan' %}active{% endif %}">Япония</a>
+            <a href="?country=china" class="tab {% if country == 'china' %}active{% endif %}">Китай</a>
+            <a href="?country=korea" class="tab {% if country == 'korea' %}active{% endif %}">Корея</a>
         </div>
+
+        <!-- Список автомобилей -->
+        <div class="cars-list">
+            {% if cars %}
+                {% for car in cars %}
+                <div class="car-card">
+                    {% if car.photo %}
+                    <div class="car-photo">
+                        <img src="{{ car.photo.url }}" alt="{{ car.model }}">
+                    </div>
+                    {% else %}
+                    <div class="car-photo placeholder">
+                        <span>Нет фото</span>
+                    </div>
+                    {% endif %}
+                    <div class="car-details">
+                        <h3>{{ car.model }}</h3>
+                        <p><strong>Страна:</strong> {{ car.get_country_display }}</p>
+                        <p><strong>Годы выпуска:</strong> {{ car.year_start }}{% if car.year_end %}–{{ car.year_end }}{% endif %}</p>
+                        <p><strong>Объём двигателя:</strong> {{ car.engine_volume }} л</p>
+                        <p><strong>Цена:</strong> {{ car.price_min|floatformat:0|intcomma }}–{{ car.price_max|floatformat:0|intcomma }} ₽</p>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-cars">Автомобили из этой страны пока отсутствуют.</p>
+            {% endif %}
+        </div>
+
+        <!-- Кнопка добавления авто (только для админа) -->
+        {% if user.is_staff %}
+        <div class="add-car-btn">
+            <a href="{% url 'add_car' %}" class="btn">Добавить автомобиль</a>
+        </div>
+        {% endif %}
     </div>
 </section>
 {% endblock %}

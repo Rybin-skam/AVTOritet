@@ -13,18 +13,17 @@ from .models import Country
 from django.contrib.auth.views import LogoutView
 from django.contrib.messages import get_messages
 from django.core.mail import send_mail
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
-from .forms import UserRegisterForm
-from .models import EmailVerificationToken
-import json
-from django.contrib.auth import get_user_model
+from .forms import UserRegisterForm, CarForm, ReviewForm, ProfileForm
+from .models import EmailVerificationToken, Profile, Car, Review, ReviewMedia, Country, City
+from django.contrib.auth import get_user_model, authenticate, login as auth_login
 from django.views.decorators.csrf import csrf_protect
-from .forms import ProfileForm
-from .models import Profile
+from django.contrib.admin.views.decorators import staff_member_required
+import json
 
 
 def reviews(request):
@@ -175,8 +174,21 @@ def contact_form(request):
     return render(request, 'AVTOritetapp/contact_form.html')
 
 def catalog(request):
-    countries = Country.objects.all()  # Получаем все страны из базы данных
-    return render(request, 'AVTOritetapp/catalog.html', {'countries': countries})
+    country = request.GET.get('country', 'japan')  # По умолчанию Япония
+    cars = Car.objects.filter(country=country)
+    return render(request, 'AVTOritetapp/catalog.html', {'cars': cars, 'country': country})
+
+@staff_member_required  # Только для администраторов
+def add_car(request):
+    if request.method == "POST":
+        form = CarForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('catalog')
+    else:
+        form = CarForm()
+    return render(request, 'AVTOritetapp/add_car.html', {'form': form})
+
 
 def country_detail(request, country_id):
     country = Country.objects.get(id=country_id)
