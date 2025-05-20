@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils.crypto import get_random_string
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
@@ -24,6 +28,7 @@ class Review(models.Model):
 
     def __str__(self):
         return f'Отзыв от {self.get_author_name()}'
+
 class ReviewMedia(models.Model):
     review = models.ForeignKey(Review, related_name='media', on_delete=models.CASCADE)
     file = models.FileField('Медиафайл', upload_to='reviews/media/%Y/%m/%d/', blank=True, null=True)
@@ -35,6 +40,7 @@ class ReviewMedia(models.Model):
 
     def __str__(self):
         return f"Медиа для отзыва {self.review.id} - {self.description or 'Без описания'}"
+
 class Country(models.Model):
     name = models.CharField(max_length=100)  # Название страны
     description = models.TextField()  # Описание страны
@@ -77,6 +83,7 @@ class Car(models.Model):
         verbose_name = "Автомобиль"
         verbose_name_plural = "Автомобили"
 
+
 class Order(models.Model):
     car_model = models.CharField(max_length=255)
     customer_name = models.CharField(max_length=255)
@@ -84,3 +91,47 @@ class Order(models.Model):
 
     def __str__(self):
         return f"{self.customer_name} - {self.car_model}"
+
+class EmailVerificationToken(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    token = models.CharField(max_length=64, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    @classmethod
+    def generate_token_for_user(cls, user):
+        token = get_random_string(64)
+        return cls.objects.create(user=user, token=token)
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+
+    GENDER_CHOICES = (
+        ('M', 'Мужской'),
+        ('F', 'Женский'),
+        ('O', 'Другой'),
+    )
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
+
+    birth_date = models.DateField(null=True, blank=True)
+
+    COUNTRY_CHOICES = (
+        ('RU', 'Россия'),
+        ('KZ', 'Казахстан'),
+        ('BY', 'Беларусь'),
+        # добавьте другие страны по необходимости
+    )
+    country = models.CharField(max_length=2, choices=COUNTRY_CHOICES, blank=True)
+
+
+# Сигналы для автоматического создания профиля при создании пользователя
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()

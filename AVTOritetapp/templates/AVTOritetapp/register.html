@@ -12,15 +12,15 @@
     align-items: center;
     min-height: 100vh;
     background: var(--light);
-    padding-top: 60px; /* Добавлен отступ сверху */
-    padding-bottom: 60px; /* Добавлен отступ снизу */
+    padding-top: 60px;
+    padding-bottom: 60px;
 }
 
 .login-container {
     max-width: 400px;
     width: 100%;
-    margin-top: 40px; /* Дополнительный отступ сверху */
-    margin-bottom: 40px; /* Дополнительный отступ снизу */
+    margin-top: 40px;
+    margin-bottom: 40px;
 }
 
 .form-group {
@@ -37,6 +37,26 @@
     box-sizing: border-box;
 }
 
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper input {
+    padding-right: 40px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 0;
+}
+
 .login-btn {
     width: 100%;
     padding: 12px;
@@ -46,6 +66,32 @@
 .availability-message, #username-status {
     margin-top: 5px;
     font-size: 13px;
+}
+
+/* Стили для сообщений */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+.alert-error, .alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+
+.alert-info {
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
 }
 
 .spinner {
@@ -88,12 +134,16 @@
 {% block content %}
 <div class="login-page">
   <div class="login-container">
-    <h2 style="margin-bottom: 30px;">Регистрация</h2> <!-- Увеличен отступ под заголовком -->
+    <h2 style="margin-bottom: 30px;">Регистрация</h2>
 
+    {# Сообщения об успехе/ошибках #}
     {% if messages %}
       {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}">
           {{ message }}
+          {% if 'подтверждения' in message|lower and 'отправлено' in message|lower %}
+            <p style="margin-top: 10px;">Не получили письмо? <a href="#" id="resend-email">Отправить повторно</a></p>
+          {% endif %}
         </div>
       {% endfor %}
     {% endif %}
@@ -120,7 +170,10 @@
 
       <div class="form-group">
         <label for="password1">Пароль</label>
-        <input type="password" name="password1" id="password1" class="form-control" required>
+        <div class="password-wrapper">
+          <input type="password" name="password1" id="password1" class="form-control" required>
+          <button type="button" class="toggle-password" onclick="togglePasswordVisibility('password1', this)">👁</button>
+        </div>
         {% if form.password1.errors %}
           <div class="error">{{ form.password1.errors }}</div>
         {% endif %}
@@ -128,7 +181,10 @@
 
       <div class="form-group">
         <label for="password2">Подтверждение пароля</label>
-        <input type="password" name="password2" id="password2" class="form-control" required>
+        <div class="password-wrapper">
+          <input type="password" name="password2" id="password2" class="form-control" required>
+          <button type="button" class="toggle-password" onclick="togglePasswordVisibility('password2', this)">👁</button>
+        </div>
         {% if form.password2.errors %}
           <div class="error">{{ form.password2.errors }}</div>
         {% endif %}
@@ -152,7 +208,19 @@
 {% block extra_js %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+function togglePasswordVisibility(inputId, button) {
+    const passwordInput = document.getElementById(inputId);
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        button.textContent = '👁‍🗨';
+    } else {
+        passwordInput.type = 'password';
+        button.textContent = '👁';
+    }
+}
+
 $(document).ready(function() {
+    // Функция проверки имени пользователя (оставляем без изменений)
     function checkUsernameDeferred(username) {
         var deferred = $.Deferred();
 
@@ -182,6 +250,7 @@ $(document).ready(function() {
         return deferred.promise();
     }
 
+    // Проверка имени пользователя (оставляем без изменений)
     $('#username').on('blur', function() {
         var username = $(this).val().trim();
 
@@ -194,6 +263,56 @@ $(document).ready(function() {
                 });
         } else {
             $('#username-status').html('');
+        }
+    });
+
+    // Улучшенный обработчик для повторной отправки письма
+    $(document).on('click', '#resend-email', function(e) {
+        e.preventDefault();
+        var $emailField = $('#email');
+        var email = $emailField.val().trim();
+
+        if (!email) {
+            alert('Пожалуйста, введите email, который вы использовали при регистрации');
+            $emailField.focus();
+            return;
+        }
+
+        $('#preloader').show();
+
+        // Используем try-catch для обработки возможных ошибок шаблонизатора
+        try {
+            var url = '{% url "resend_verification" %}'; // Пробуем использовать url-хелпер
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {
+                    email: email,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if(response && response.status === 'success') {
+                        alert('Письмо с подтверждением отправлено повторно на ' + email);
+                    } else {
+                        alert(response.message || 'Произошла ошибка при отправке письма');
+                    }
+                },
+                error: function(xhr) {
+                    var errorMsg = 'Ошибка при отправке письма';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                    }
+                    alert(errorMsg);
+                },
+                complete: function() {
+                    $('#preloader').hide();
+                }
+            });
+        } catch (error) {
+            $('#preloader').hide();
+            console.error('Ошибка в обработчике отправки письма:', error);
+            alert('Системная ошибка. Пожалуйста, попробуйте позже или свяжитесь с поддержкой');
         }
     });
 });
