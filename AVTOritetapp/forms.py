@@ -3,7 +3,28 @@ from .models import Review, ReviewMedia
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
+from .models import Car, Review
+from django.forms import inlineformset_factory
 
+
+class ReviewMediaForm(forms.ModelForm):
+    class Meta:
+        model = ReviewMedia
+        fields = ['file', 'description']
+
+# Создаём FormSet для обработки нескольких медиафайлов
+ReviewMediaFormSet = inlineformset_factory(
+    Review,  # Модель родителя
+    ReviewMedia,  # Модель связанных объектов
+    form=ReviewMediaForm,  # Форма для каждого медиа
+    extra=1,  # Количество пустых форм для добавления
+    can_delete=True,  # Разрешить удаление
+    max_num=5  # Максимальное количество медиафайлов (опционально)
+)
+class CarForm(forms.ModelForm):
+    class Meta:
+        model = Car
+        fields = ['country', 'model', 'photo', 'year_start', 'year_end', 'engine_volume', 'price_min', 'price_max']
 class ReviewForm(forms.ModelForm):
     guest_name = forms.CharField(
         label='Ваше имя',

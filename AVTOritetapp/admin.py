@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Review  # Импортируем модель отзыва
+from .models import Review, Car  # Импортируем модель отзыва
 
 # Регистрируем модель в админке
 
@@ -14,3 +14,9 @@ class ReviewAdmin(admin.ModelAdmin):
     def author_name(self, obj):
         return obj.get_author_name()  # Вызываем метод модели
     author_name.short_description = 'Автор'
+
+@admin.register(Car)  # Регистрируем Car
+class CarAdmin(admin.ModelAdmin):
+    list_display = ['model', 'country', 'year_start', 'year_end', 'engine_volume', 'price_min', 'price_max', 'photo']  # Все поля
+    list_filter = ['country', 'year_start', 'year_end']  # Фильтры по основным полям
+    search_fields = ['model', 'country']  # Поиск по ключевым полям
