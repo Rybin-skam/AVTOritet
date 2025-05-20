@@ -4,11 +4,27 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.crypto import get_random_string
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
+
+from django.db import models
+
+class CarDealer(models.Model):
+    title = models.CharField(max_length=100, unique=True, verbose_name="Название салона")
+    location = models.CharField(max_length=200, verbose_name="Адрес")
+    contact_number = models.CharField(max_length=15, verbose_name="Телефон")
+    email_address = models.EmailField(max_length=254, blank=True, null=True, verbose_name="Email")
 
 
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = "Автосалон "
+        verbose_name_plural = "Автосалоны "
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     guest_name = models.CharField('Имя гостя', max_length=100, blank=True, null=True)
+    car_dealer = models.ForeignKey(CarDealer, on_delete=models.CASCADE, related_name='reviews',verbose_name="Автосалон",null=True)
     text = models.TextField('Текст отзыва')
     rating = models.IntegerField(
         'Оценка',
