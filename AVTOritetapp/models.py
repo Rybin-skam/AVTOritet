@@ -4,8 +4,9 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.crypto import get_random_string
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 from django.utils import timezone
-
 from django.db import models
 
 class CarDealer(models.Model):
@@ -13,7 +14,6 @@ class CarDealer(models.Model):
     location = models.CharField(max_length=200, verbose_name="Адрес")
     contact_number = models.CharField(max_length=15, verbose_name="Телефон")
     email_address = models.EmailField(max_length=254, blank=True, null=True, verbose_name="Email")
-
 
     def __str__(self):
         return self.title
@@ -100,13 +100,118 @@ class Car(models.Model):
         verbose_name_plural = "Автомобили"
 
 
-class Order(models.Model):
-    car_model = models.CharField(max_length=255)
-    customer_name = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
+class CarOrder(models.Model):
+    COUNTRY_CHOICES = [
+        ('Япония', 'Япония'),
+        ('Корея', 'Корея'),
+        ('Китай', 'Китай'),
+    ]
+
+    # Связь с пользователем
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь',
+        related_name='car_orders',
+        null=True,  # Временно, для существующих записей
+        blank=True
+    )
+
+    # Информация об авто
+    country = models.CharField(
+        'Страна',
+        max_length=20,
+        choices=COUNTRY_CHOICES
+    )
+    brand = models.CharField(
+        'Марка авто',
+        max_length=100
+    )
+    year_from = models.PositiveIntegerField(
+        'Год от',
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(1990)]
+    )
+    year_to = models.PositiveIntegerField(
+        'Год до',
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(1990)]
+    )
+    budget_from = models.DecimalField(
+        'Бюджет от (USD)',
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+    budget_to = models.DecimalField(
+        'Бюджет до (USD)',
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+
+    # Контактная информация
+    name = models.CharField(
+        'Имя',
+        max_length=100
+    )
+    email = models.EmailField(
+        'Email'
+    )
+    phone = models.CharField(
+        'Телефон',
+        max_length=20
+    )
+    comments = models.TextField(
+        'Дополнительные пожелания',
+        blank=True
+    )
+
+    # Метаданные
+    created_at = models.DateTimeField(
+        'Дата создания',
+        auto_now_add=True
+    )
+    is_processed = models.BooleanField(
+        'Обработано',
+        default=False
+    )
+
+    class Meta:
+        verbose_name = 'Заявка на авто'
+        verbose_name_plural = 'Заявки на авто'
+        ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.customer_name} - {self.car_model}"
+        return f'Заявка #{self.id} от {self.name} ({self.brand})'
+
+    def clean(self):
+        """
+        Валидация данных перед сохранением
+        """
+        super().clean()
+
+        if self.year_from and self.year_to and self.year_from > self.year_to:
+            raise ValidationError({
+                'year_from': 'Год "от" не может быть больше года "до"'
+            })
+
+        if self.budget_from and self.budget_to and self.budget_from > self.budget_to:
+            raise ValidationError({
+                'budget_from': 'Бюджет "от" не может быть больше бюджета "до"'
+            })
+
+        # Дополнительная валидация для новых записей
+        if not self.pk:  # Только для новых записей
+            if not self.user:
+                raise ValidationError({
+                    'user': 'Заявка должна быть связана с пользователем'
+                })
+
 
 class EmailVerificationToken(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

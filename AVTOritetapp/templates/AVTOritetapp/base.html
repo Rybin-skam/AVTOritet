@@ -16,17 +16,73 @@
     <link rel="stylesheet" type="text/css" href="{% static 'AVTOritetapp/css/catalog.css' %}">
 
     <style>
-        html, body {
-            height: 100%;
-            margin: 0;
+        :root {
+            --header-height: 80px;
         }
+
+        html {
+            scroll-padding-top: var(--header-height);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
         .page-container {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
-        main {
+
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: var(--primary);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .main-content {
             flex: 1;
+            margin-top: var(--header-height);
+        }
+
+        /* Cookie banner styles */
+        .cookie-banner {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #333;
+            color: white;
+            padding: 15px;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1001;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+        }
+
+        .cookie-banner p {
+            margin: 0;
+            flex-grow: 1;
+            padding-right: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .cookie-banner {
+                flex-direction: column;
+                text-align: center;
+            }
+            .cookie-banner p {
+                padding-right: 0;
+                margin-bottom: 10px;
+            }
         }
     </style>
 
@@ -47,7 +103,7 @@
                     </nav>
                     <div class="header__contact">
                         <span>+7 (999) 123-45-67</span>
-                        <a href="{% url 'contact_form' %}" class="btn">Заказать авто</a>
+                        <a href="{% url 'order_form' %}" class="btn">Заказать авто</a>
                         {% if user.is_authenticated %}
                         <a href="{% url 'profile' %}" class="btn">Профиль ({{ user.username }})</a>
                         <form action="{% url 'logout' %}" method="post" style="display: inline;">
@@ -62,19 +118,17 @@
             </div>
         </header>
 
-
-{% if request.path == '/' %}
-{% block hero %}
-<section class="hero" id="hero" style="background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('{% static "AVTOritetapp/images/drift.gif" %}');">
-    <div class="container hero-content">
-        <h1>Автомобили из Японии, Китая и Кореи</h1>
-        <p>Прямые поставки под ключ с гарантией 1 год</p>
-        <a href="#form" class="btn" id="form-button">Оставить заявку</a>
-    </div>
-</section>
-{% endblock %}
-{% endif %}
-
+        {% if request.path == '/' %}
+        {% block hero %}
+        <section class="hero" id="hero" style="background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('{% static "AVTOritetapp/images/drift.gif" %}');">
+            <div class="container hero-content">
+                <h1>Автомобили из Японии, Китая и Кореи</h1>
+                <p>Прямые поставки под ключ с гарантией 1 год</p>
+                <a href="{% url 'order_form' %}" class="btn">Оставить заявку</a>
+            </div>
+        </section>
+        {% endblock %}
+        {% endif %}
 
         <!-- Main Content -->
         <main class="main-content {% if request.path == '/catalog/' %} catalog-page {% endif %}">
@@ -104,9 +158,15 @@
         </footer>
     </div>
 
+    <!-- Блок для cookie-баннера -->
+    <div id="cookie-banner" class="cookie-banner">
+        <p>Мы используем cookies для улучшения работы сайта. Продолжая использовать сайт, вы соглашаетесь с этим.</p>
+        <button id="accept-cookies" class="btn">Принять</button>
+    </div>
 
     {% block extra_js %}
     <script>
+        // Управление hero-секцией
         document.addEventListener("DOMContentLoaded", function() {
             if (window.location.pathname !== "/") {
                 var heroSection = document.querySelector(".hero");
@@ -114,6 +174,34 @@
                     heroSection.style.display = "none";
                 }
             }
+
+            // Управление cookie-баннером
+            function setCookie(name, value, days) {
+                const expires = new Date();
+                expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+                document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+            }
+
+            function getCookie(name) {
+                const cookies = document.cookie.split(';');
+                for (let cookie of cookies) {
+                    const [cookieName, cookieValue] = cookie.trim().split('=');
+                    if (cookieName === name) return cookieValue;
+                }
+                return null;
+            }
+
+            const cookieBanner = document.getElementById('cookie-banner');
+            const acceptBtn = document.getElementById('accept-cookies');
+
+            if (!getCookie('cookies_accepted')) {
+                cookieBanner.style.display = 'flex';
+            }
+
+            acceptBtn.addEventListener('click', function() {
+                setCookie('cookies_accepted', 'true', 30);
+                cookieBanner.style.display = 'none';
+            });
         });
     </script>
     {% endblock %}

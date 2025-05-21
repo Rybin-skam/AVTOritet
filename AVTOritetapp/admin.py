@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Review, Car, CarDealer  # Импортируем модель отзыва
+from django.contrib import admin
+from .models import Review, Car, CarOrder, CarDealer  # Combined both imports
+from django.contrib import messages
 
 # Регистрируем модель в админке
 
@@ -23,3 +25,14 @@ class CarAdmin(admin.ModelAdmin):
     list_display = ['model', 'country', 'year_start', 'year_end', 'engine_volume', 'price_min', 'price_max', 'photo']  # Все поля
     list_filter = ['country', 'year_start', 'year_end']  # Фильтры по основным полям
     search_fields = ['model', 'country']  # Поиск по ключевым полям
+
+
+@admin.register(CarOrder)
+class CarOrderAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'brand', 'country', 'created_at')
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        # Очищаем сообщения в админке
+        storage = messages.get_messages(request)
+        storage.used = True

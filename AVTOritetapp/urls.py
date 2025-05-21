@@ -3,6 +3,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
+from .views import order_form
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -26,4 +27,6 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('check_username/', views.check_username, name='check_username'),
     path('get_cities/', views.get_cities, name='get_cities'),
+    path('order/', views.order_form, name='order_form'),
+    path('submit_order/', views.submit_order, name='submit_order'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

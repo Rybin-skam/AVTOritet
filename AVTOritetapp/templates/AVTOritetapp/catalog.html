@@ -34,6 +34,11 @@
                         <p><strong>Годы выпуска:</strong> {{ car.year_start }}{% if car.year_end %}–{{ car.year_end }}{% endif %}</p>
                         <p><strong>Объём двигателя:</strong> {{ car.engine_volume }} л</p>
                         <p><strong>Цена:</strong> {{ car.price_min|floatformat:0|intcomma }}–{{ car.price_max|floatformat:0|intcomma }} ₽</p>
+                        <!-- Добавляем кнопку с передачей параметров автомобиля -->
+                        <a href="{% url 'order_form' %}?car_model=Toyota&country=Япония&year_start=2018&year_end=2022&price_min=1000000&price_max=2000000"
+                        class="btn">
+                        Оставить заявку
+                        </a>
                     </div>
                 </div>
                 {% endfor %}

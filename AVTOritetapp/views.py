@@ -1,29 +1,29 @@
-from .models import Country, Car
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from .models import Review, ReviewMedia
-from .forms import ReviewForm, ReviewMediaForm
 from django.http import JsonResponse
-from .models import Order, User
-from django.contrib.auth import authenticate, login as auth_login
-from .forms import UserRegisterForm
-from .models import City  # Импортируем модель City
-from .models import Country
 from django.contrib.auth.views import LogoutView
 from django.contrib.messages import get_messages
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth.models import User
 from .forms import UserRegisterForm, CarForm, ReviewForm, ProfileForm
 from .models import EmailVerificationToken, Profile, Car, Review, ReviewMedia, Country, City
 from django.contrib.auth import get_user_model, authenticate, login as auth_login
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.admin.views.decorators import staff_member_required
-
+from django.core.exceptions import ValidationError
+from .models import CarOrder
+import logging
+from django.http import HttpResponse
+from django.views.decorators.cache import cache_page
+import logging
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from .forms import ReviewForm, ReviewMediaForm
+from django.contrib.auth.decorators import login_required
+from .models import Car
+from django.core.cache import cache
 import json
 
 from .models import CarDealer
@@ -91,11 +91,6 @@ def review_list(request):
     reviews = Review.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'AVTOritetapp/review_list.html', {'reviews': reviews})
 
-
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from .forms import ReviewForm, ReviewMediaForm
-from django.contrib.auth.decorators import login_required
 
 @login_required
 def add_review(request):
@@ -198,10 +193,14 @@ def contacts(request):
 def contact_form(request):
     return render(request, 'AVTOritetapp/contact_form.html')
 
+
+@cache_page(15)
 def catalog(request):
-    country = request.GET.get('country', 'japan')  # По умолчанию Япония
-    cars = Car.objects.filter(country=country)
+    country = request.GET.get('country', 'japan')
+    logger.info(f"Executing catalog view with country: {country}")
+    cars = list(Car.objects.filter(country=country))
     return render(request, 'AVTOritetapp/catalog.html', {'cars': cars, 'country': country})
+
 
 @staff_member_required  # Только для администраторов
 def add_car(request):
@@ -359,3 +358,69 @@ class CustomLogoutView(LogoutView):
         return response
 
     next_page = 'index'  # Указываем, куда перенаправлять после выхода
+
+
+
+logger = logging.getLogger(__name__)
+
+
+def order_form(request):
+    # Получаем параметры из URL
+    car_model = request.GET.get('car_model', '')
+    country = request.GET.get('country', '')
+    year_start = request.GET.get('year_start', '')
+    year_end = request.GET.get('year_end', '')
+    price_min = request.GET.get('price_min', '')
+    price_max = request.GET.get('price_max', '')
+
+    context = {
+        'car_model': car_model,
+        'country': country,  # Теперь передаем country в контекст
+        'year_start': year_start,
+        'year_end': year_end,
+        'price_min': price_min,
+        'price_max': price_max,
+    }
+
+    return render(request, 'AVTOritetapp/order_form.html', context)
+
+@login_required
+def submit_order(request):
+    if request.method == 'POST':
+        logger.info("Получены данные: %s", request.POST)
+
+        try:
+            order = CarOrder(
+                user=request.user,
+                country=request.POST['country'],
+                brand=request.POST['brand'],
+                name=request.POST['name'],
+                email=request.POST['email'],
+                phone=request.POST['phone'],
+                year_from=request.POST.get('year_from') or None,
+                year_to=request.POST.get('year_to') or None,
+                budget_from=request.POST.get('budget_from') or None,
+                budget_to=request.POST.get('budget_to') or None,
+                comments=request.POST.get('comments', '')
+            )
+            order.save()
+
+            logger.info("Заявка сохранена, ID: %s", order.id)
+            messages.success(request, '✅ Ваша заявка успешно отправлена!')
+            return redirect('order_form')
+
+        except Exception as e:
+            logger.error("Ошибка сохранения: %s", e)
+            messages.error(request, f'❌ Ошибка: {str(e)}')
+            return redirect('order_form')
+
+    return redirect('order_form')
+
+def set_theme_cookie(request):
+    response = HttpResponse("Тема установлена")
+    response.set_cookie('site_theme', 'dark', max_age=365*24*60*60)
+    return response
+
+def get_theme(request):
+    theme = request.COOKIES.get('site_theme', 'light')
+    return render(request, 'page.html', {'theme': theme})
