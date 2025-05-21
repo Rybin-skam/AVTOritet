@@ -7,6 +7,7 @@ from .views import order_form
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('dealers/', views.dealers, name='dealers'),
     path('catalog/', views.catalog, name='catalog'),
     path('add_car/', views.add_car, name='add_car'),
     path('about/', views.about, name='about'),
@@ -28,5 +29,4 @@ urlpatterns = [
     path('get_cities/', views.get_cities, name='get_cities'),
     path('order/', views.order_form, name='order_form'),
     path('submit_order/', views.submit_order, name='submit_order'),
-
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,15 +1,18 @@
 from django.contrib import admin
-from .models import Review, Car  # Импортируем модель отзыва
-from .models import CarOrder
+from django.contrib import admin
+from .models import Review, Car, CarOrder, CarDealer  # Combined both imports
 from django.contrib import messages
 
 # Регистрируем модель в админке
 
-
+@admin.register(CarDealer)
+class CarDealerAdmin(admin.ModelAdmin):
+    list_display = ('title', 'location', 'contact_number', 'email_address')
+    search_fields = ('title', 'location')
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ['id', 'author_name', 'rating', 'created_at']  # Используем author_name как метод
+    list_display = ['id', 'author_name','car_dealer', 'rating', 'created_at']  # Используем author_name как метод
     list_filter = ['rating', 'created_at']
     search_fields = ['text', 'guest_name', 'user__username']
 

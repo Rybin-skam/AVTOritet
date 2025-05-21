@@ -24,11 +24,34 @@ from .forms import ReviewForm, ReviewMediaForm
 from django.contrib.auth.decorators import login_required
 from .models import Car
 from django.core.cache import cache
+import json
 
+from .models import CarDealer
+from .forms import CarDealerForm
 
+def dealers(request):
+    if request.method == 'POST':
+        if request.user.is_staff:  # Проверка, что только админ может отправлять форму
+            form = CarDealerForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('dealers')
+            else:
+                return render(request, 'AVTOritetapp/dealers.html', {'dealers': CarDealer.objects.all(), 'form': form})
+        else:
+            return render(request, 'AVTOritetapp/dealers.html', {'dealers': CarDealer.objects.all(), 'form': CarDealerForm()})
+    else:
+        form = CarDealerForm()
+
+    dealers = CarDealer.objects.all()  # Загружаем все автосалоны
+    return render(request, 'AVTOritetapp/dealers.html', {'dealers': dealers, 'form': form})
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import Review, CarDealer
+from .forms import ReviewForm, ReviewMediaForm
 
 def reviews(request):
-    reviews = Review.objects.all().order_by('-created_at')
+    reviews = Review.objects.select_related('car_dealer').all().order_by('-created_at')
     review_form = ReviewForm(user=request.user)  # Передаем пользователя в форму
     media_form = ReviewMediaForm()
 
@@ -58,7 +81,8 @@ def reviews(request):
     return render(request, 'AVTOritetapp/reviews.html', {
         'reviews': reviews,
         'review_form': review_form,
-        'media_form': media_form
+        'media_form': media_form,
+        'dealers': CarDealer.objects.all()  # Добавляем автосалоны в контекст
     })
 
 

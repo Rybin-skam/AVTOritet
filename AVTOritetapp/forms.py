@@ -1,8 +1,4 @@
-from django import forms
-from .models import Review, ReviewMedia
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
-from django.utils.translation import gettext_lazy as _
+
 from django import forms
 from .models import Review, ReviewMedia, Car, Profile
 from django.contrib.auth.models import User
@@ -10,8 +6,18 @@ from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory
+from .models import CarDealer
 
-
+class CarDealerForm(forms.ModelForm):
+    class Meta:
+        model = CarDealer
+        fields = ['title', 'location', 'contact_number', 'email_address']
+        widgets = {
+            'title': forms.TextInput(attrs={'placeholder': 'Название салона'}),
+            'location': forms.TextInput(attrs={'placeholder': 'Адрес'}),
+            'contact_number': forms.TextInput(attrs={'placeholder': 'Телефон'}),
+            'email_address': forms.EmailInput(attrs={'placeholder': 'Email'}),
+        }
 class ReviewMediaForm(forms.ModelForm):
     class Meta:
         model = ReviewMedia
@@ -42,8 +48,9 @@ class ReviewForm(forms.ModelForm):
 
     class Meta:
         model = Review
-        fields = ['guest_name', 'text', 'rating']
+        fields = ['guest_name', 'car_dealer','text', 'rating']
         widgets = {
+            'car_dealer': forms.Select(attrs={'class': 'form-control'}),
             'text': forms.Textarea(attrs={
                 'class': 'form-control',
                 'placeholder': 'Напишите ваш отзыв...',
