@@ -2,18 +2,18 @@ from django.contrib.auth import views as auth_views
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from . import views  # Импортируем наши представления (views)
+from . import views
+from .views import order_form
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('catalog/', views.catalog, name='catalog'),  # Страница каталога
+    path('catalog/', views.catalog, name='catalog'),
     path('add_car/', views.add_car, name='add_car'),
-    path('about/', views.about, name='about'),  # Страница "О нас"
-    path('reviews/', views.reviews, name='reviews'),  # Страница отзывов
-    path('contacts/', views.contacts, name='contacts'),  # Страница контактов
-    path('contact_form/', views.contact_form, name='contact_form'),  # Форма для связи
-    path('country/<int:country_id>/', views.country_detail, name='country_detail'),
+    path('about/', views.about, name='about'),
     path('reviews/', views.reviews, name='reviews'),
+    path('contacts/', views.contacts, name='contacts'),
+    path('contact_form/', views.contact_form, name='contact_form'),
+    path('country/<int:country_id>/', views.country_detail, name='country_detail'),
     path('reviews/my/', views.review_list, name='review_list'),
     path('reviews/add/', views.add_review, name='add_review'),
     path('reviews/edit/<int:review_id>/', views.edit_review, name='edit_review'),
@@ -26,7 +26,7 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('check_username/', views.check_username, name='check_username'),
     path('get_cities/', views.get_cities, name='get_cities'),
+    path('order/', views.order_form, name='order_form'),
+    path('submit_order/', views.submit_order, name='submit_order'),
 
-urlpatterns = [
-    # ... все ваши пути ...
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

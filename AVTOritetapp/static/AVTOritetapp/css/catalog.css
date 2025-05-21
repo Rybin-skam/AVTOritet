@@ -282,3 +282,27 @@
         margin-bottom: 10px; /* Уменьшаем отступ */
     }
 }
+
+/* Стиль для кнопки "Оставить заявку" в карточках */
+.car-card .order-btn {
+    display: block;
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px 20px;
+    text-align: center;
+    background: #e74c3c; /* Красный цвет */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s ease, transform 0.3s ease;
+    box-sizing: border-box;
+}
+
+.car-card .order-btn:hover {
+    background: #c0392b; /* Темнее при наведении */
+    transform: scale(1.05); /* Небольшое увеличение */
+}
