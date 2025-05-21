@@ -22,6 +22,11 @@
                         {% if user.is_authenticated %}value="{{ user.username }}"{% else %}required{% endif %}>
                 </div>
 
+                <div class="form-group">
+                    <label for="id_car_dealer">Выберите автосалон:</label>
+                    {{ review_form.car_dealer }}
+                </div>
+
                 <!-- Поле для текста отзыва -->
                 <div class="form-group">
                     <label for="id_text">Текст отзыва:</label>
